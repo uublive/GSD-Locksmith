@@ -172,7 +172,10 @@ else
   fi
 
   verbose_log "Writing registry to gist (retry after collision)"
-  write_registry "$UPDATED_REGISTRY"
+  if ! write_registry "$UPDATED_REGISTRY"; then
+    echo "ERROR: gist write failed on retry" >&2
+    exit 2
+  fi
 
   verbose_log "Re-reading registry for collision check after retry"
   REGISTRY_AFTER="$(read_registry)"
