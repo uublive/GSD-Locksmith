@@ -141,8 +141,8 @@ if [[ "$collision" == "false" ]]; then
   verbose_log "No collision detected for $TYPE $NEXT_NUM"
 else
   # First collision — extract competing owner and warn
-  COMPETING_OWNER="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" \
-    '[.claims[] | select(.type==$t and .number==$n)] | .[0].owner // "unknown"')"
+  COMPETING_OWNER="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" --arg o "$owner" \
+    '[.claims[] | select(.type==$t and .number==$n and .owner!=$o)] | .[0].owner // "unknown"')"
   echo "WARNING: Collision detected on $TYPE $NEXT_NUM — another developer claimed it first. Retrying..." >&2
   echo "Competing owner: $COMPETING_OWNER" >&2
 
@@ -189,8 +189,8 @@ else
   collision="$(detect_collision "$REGISTRY_AFTER" "$NEXT_NUM" "$TYPE")"
 
   if [[ "$collision" == "true" ]]; then
-    COMPETING_OWNER2="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" \
-      '[.claims[] | select(.type==$t and .number==$n)] | .[0].owner // "unknown"')"
+    COMPETING_OWNER2="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" --arg o "$owner" \
+      '[.claims[] | select(.type==$t and .number==$n and .owner!=$o)] | .[0].owner // "unknown"')"
     echo "ERROR: Collision persists after retry on $TYPE $NEXT_NUM. Another developer ($COMPETING_OWNER2) claimed the same number. Resolve manually by editing the registry or running this command again." >&2
     exit 2
   fi
