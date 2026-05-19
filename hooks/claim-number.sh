@@ -40,9 +40,9 @@ if [[ "$TYPE" == "phase" ]]; then
     echo "Usage: $(basename "$0") phase <milestone_num>" >&2
     exit 2
   fi
-  # Validate milestone_num is a positive integer
-  if ! [[ "$MILESTONE_NUM" =~ ^[0-9]+$ ]]; then
-    echo "ERROR: milestone_num must be a positive integer, got: '$MILESTONE_NUM'" >&2
+  # Validate milestone_num is a positive integer (>= 1)
+  if ! [[ "$MILESTONE_NUM" =~ ^[1-9][0-9]*$ ]]; then
+    echo "ERROR: milestone_num must be a positive integer (>= 1), got: '$MILESTONE_NUM'" >&2
     exit 2
   fi
 fi
