@@ -77,6 +77,8 @@ else
   NEXT_NUM="$(echo "$REGISTRY" | jq --argjson m "$MILESTONE_NUM" '[.claims[] | select(.type=="phase" and .status=="active" and .milestone==$m) | .number] | if length == 0 then 1 else max + 1 end')"
 fi
 
+verbose_log "Computed next $TYPE number: $NEXT_NUM"
+
 # --- Build updated registry JSON ---
 if [[ "$TYPE" == "milestone" ]]; then
   # D-08: Dual-claim — milestone + phase-1 in a single write
@@ -102,21 +104,27 @@ else
 fi
 
 # --- Dry-run guard (ALLOC-04) ---
+# Must short-circuit before any write or collision check. Stdout stays empty in dry-run mode.
 if [[ -n "${GSD_DRY_RUN:-}" ]]; then
   if [[ "$TYPE" == "milestone" ]]; then
-    echo "[DRY RUN] Would write claim: type=milestone number=$NEXT_NUM owner=$owner branch=$branch" >&2
-    echo "[DRY RUN] Would also write claim: type=phase number=1 milestone=$NEXT_NUM owner=$owner branch=$branch" >&2
+    echo "[DRY RUN] Would claim: type=milestone number=$NEXT_NUM owner=$owner branch=$branch" >&2
+    echo "[DRY RUN] Would also claim: type=phase number=1 milestone=$NEXT_NUM owner=$owner branch=$branch" >&2
   else
-    echo "[DRY RUN] Would write claim: type=phase number=$NEXT_NUM milestone=$MILESTONE_NUM owner=$owner branch=$branch" >&2
+    echo "[DRY RUN] Would claim: type=phase number=$NEXT_NUM milestone=$MILESTONE_NUM owner=$owner branch=$branch" >&2
   fi
   echo "[DRY RUN] No gist write performed." >&2
   exit 0
 fi
 
-# --- Write registry ---
-write_registry "$UPDATED_REGISTRY"
+# --- Write registry (first attempt) ---
+verbose_log "Writing registry to gist (first attempt)"
+if ! write_registry "$UPDATED_REGISTRY"; then
+  echo "ERROR: gist write failed" >&2
+  exit 2
+fi
 
-# --- Re-read and collision detection (D-09) ---
+# --- Re-read immediately after write for collision detection + write confirmation (D-09, Pitfall 4) ---
+verbose_log "Re-reading registry for collision check"
 REGISTRY_AFTER="$(read_registry)"
 
 detect_collision() {
@@ -129,10 +137,16 @@ detect_collision() {
 
 collision="$(detect_collision "$REGISTRY_AFTER" "$NEXT_NUM" "$TYPE")"
 
-if [[ "$collision" == "true" ]]; then
-  verbose_log "Collision detected for $TYPE $NEXT_NUM — retrying with next available number"
+if [[ "$collision" == "false" ]]; then
+  verbose_log "No collision detected for $TYPE $NEXT_NUM"
+else
+  # First collision — extract competing owner and warn
+  COMPETING_OWNER="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" \
+    '[.claims[] | select(.type==$t and .number==$n)] | .[0].owner // "unknown"')"
+  echo "WARNING: Collision detected on $TYPE $NEXT_NUM — another developer claimed it first. Retrying..." >&2
+  echo "Competing owner: $COMPETING_OWNER" >&2
 
-  # Retry: recompute from re-read registry
+  # Retry: recompute NEXT_NUM from fresh registry data
   if [[ "$TYPE" == "milestone" ]]; then
     NEXT_NUM="$(echo "$REGISTRY_AFTER" | jq '[.claims[] | select(.type=="milestone" and .status=="active") | .number] | if length == 0 then 1 else max + 1 end')"
     UPDATED_REGISTRY="$(echo "$REGISTRY_AFTER" | jq \
@@ -157,16 +171,27 @@ if [[ "$collision" == "true" ]]; then
       ]')"
   fi
 
+  verbose_log "Writing registry to gist (retry after collision)"
   write_registry "$UPDATED_REGISTRY"
+
+  verbose_log "Re-reading registry for collision check after retry"
   REGISTRY_AFTER="$(read_registry)"
   collision="$(detect_collision "$REGISTRY_AFTER" "$NEXT_NUM" "$TYPE")"
 
   if [[ "$collision" == "true" ]]; then
-    competing_owner="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" \
-      '[.claims[] | select(.type==$t and .number==$n)] | first | .owner // "unknown"')"
-    echo "ERROR: Collision on $TYPE $NEXT_NUM — competing owner: $competing_owner. Resolve manually." >&2
+    COMPETING_OWNER2="$(echo "$REGISTRY_AFTER" | jq -r --argjson n "$NEXT_NUM" --arg t "$TYPE" \
+      '[.claims[] | select(.type==$t and .number==$n)] | .[0].owner // "unknown"')"
+    echo "ERROR: Collision persists after retry on $TYPE $NEXT_NUM. Another developer ($COMPETING_OWNER2) claimed the same number. Resolve manually by editing the registry or running this command again." >&2
     exit 2
   fi
+
+  # Success after retry
+  if [[ "$TYPE" == "milestone" ]]; then
+    echo "Claimed milestone $NEXT_NUM and phase 1 of milestone $NEXT_NUM (after retry due to collision)"
+  else
+    echo "Claimed phase $NEXT_NUM of milestone $MILESTONE_NUM (after retry due to collision)"
+  fi
+  exit 0
 fi
 
 # --- Success output (stdout only) ---

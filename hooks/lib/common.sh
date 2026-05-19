@@ -33,5 +33,5 @@ load_config() {
 }
 
 verbose_log() {
-  [[ -n "${GSD_VERBOSE:-}" ]] && echo "[GSD] $*" >&2
+  [[ -n "${GSD_VERBOSE:-}" ]] && echo "[GSD] $*" >&2 || true
 }
