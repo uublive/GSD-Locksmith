@@ -49,7 +49,7 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 02-01-PLAN.md — settings.json wiring + both CC wrapper scripts (milestone and phase)
+- [x] 02-01-PLAN.md — settings.json wiring + both CC wrapper scripts (milestone and phase)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 02-02-PLAN.md — Live CC session verification: hooks fire, block on failure (exit 2), inject additionalContext

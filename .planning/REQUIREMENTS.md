@@ -25,10 +25,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Hooks
 
-- [ ] **HOOK-01**: CC PreToolUse hook intercepts `/gsd-new-milestone` and claims number before execution
-- [ ] **HOOK-02**: CC PreToolUse hook intercepts `/gsd-new-phase` and claims number before execution
-- [ ] **HOOK-03**: Hooks use exit code 2 (not 1) to block on failure — verified by test
-- [ ] **HOOK-04**: Hook stdout/stderr is clean (no shell profile contamination)
+- [x] **HOOK-01**: CC PreToolUse hook intercepts `/gsd-new-milestone` and claims number before execution
+- [x] **HOOK-02**: CC PreToolUse hook intercepts `/gsd-new-phase` and claims number before execution
+- [x] **HOOK-03**: Hooks use exit code 2 (not 1) to block on failure — verified by test
+- [x] **HOOK-04**: Hook stdout/stderr is clean (no shell profile contamination)
 
 ### Validation
 
@@ -82,10 +82,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ALLOC-03 | Phase 1 | Complete |
 | ALLOC-04 | Phase 1 | Complete |
 | ALLOC-05 | Phase 1 | Complete |
-| HOOK-01 | Phase 2 | Pending |
-| HOOK-02 | Phase 2 | Pending |
-| HOOK-03 | Phase 2 | Pending |
-| HOOK-04 | Phase 2 | Pending |
+| HOOK-01 | Phase 2 | Complete |
+| HOOK-02 | Phase 2 | Complete |
+| HOOK-03 | Phase 2 | Complete |
+| HOOK-04 | Phase 2 | Complete |
 | VAL-01 | Phase 3 | Pending |
 | VAL-02 | Phase 3 | Pending |
 | VAL-03 | Phase 3 | Pending |
