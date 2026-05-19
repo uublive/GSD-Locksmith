@@ -9,16 +9,16 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Registry
 
-- [ ] **REG-01**: Developer can configure shared gist ID in committed project config file
-- [ ] **REG-02**: Registry stores milestone/phase claims with branch, owner, and timestamp metadata
-- [ ] **REG-03**: Shell library provides `read_registry()` and `write_registry()` functions for all gist operations
+- [x] **REG-01**: Developer can configure shared gist ID in committed project config file
+- [x] **REG-02**: Registry stores milestone/phase claims with branch, owner, and timestamp metadata
+- [x] **REG-03**: Shell library provides `read_registry()` and `write_registry()` functions for all gist operations
 - [ ] **REG-04**: Developer can view all active claims with `gsd-status` (who, what number, which branch)
-- [ ] **REG-05**: Every script validates `jq`, `gh`, and auth status before executing
+- [x] **REG-05**: Every script validates `jq`, `gh`, and auth status before executing
 
 ### Allocation
 
-- [ ] **ALLOC-01**: System claims next available milestone number from registry automatically
-- [ ] **ALLOC-02**: System claims next available phase number within a milestone from registry automatically
+- [x] **ALLOC-01**: System claims next available milestone number from registry automatically
+- [x] **ALLOC-02**: System claims next available phase number within a milestone from registry automatically
 - [ ] **ALLOC-03**: System detects last-write-wins race and displays collision warning with rollback instructions
 - [ ] **ALLOC-04**: Developer can preview allocation without writing via `GSD_DRY_RUN=1` env var
 - [ ] **ALLOC-05**: Developer can see detailed operation logs via `GSD_VERBOSE=1` env var
@@ -72,13 +72,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REG-01 | Phase 1 | Pending |
-| REG-02 | Phase 1 | Pending |
-| REG-03 | Phase 1 | Pending |
+| REG-01 | Phase 1 | Complete |
+| REG-02 | Phase 1 | Complete |
+| REG-03 | Phase 1 | Complete |
 | REG-04 | Phase 1 | Pending |
-| REG-05 | Phase 1 | Pending |
-| ALLOC-01 | Phase 1 | Pending |
-| ALLOC-02 | Phase 1 | Pending |
+| REG-05 | Phase 1 | Complete |
+| ALLOC-01 | Phase 1 | Complete |
+| ALLOC-02 | Phase 1 | Complete |
 | ALLOC-03 | Phase 1 | Pending |
 | ALLOC-04 | Phase 1 | Pending |
 | ALLOC-05 | Phase 1 | Pending |

@@ -29,7 +29,7 @@
 
 Plans:
 **Wave 1**
-- [ ] 01-01-PLAN.md — Walking Skeleton: config file, common.sh, gist.sh, thin claim-number.sh end-to-end
+- [x] 01-01-PLAN.md — Walking Skeleton: config file, common.sh, gist.sh, thin claim-number.sh end-to-end
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-02-PLAN.md — Allocation hardening: collision detection, retry loop, dry-run and verbose modes
