@@ -8,7 +8,7 @@
 ## Phases
 
 - [x] **Phase 1: Registry & Allocation Core** - Shared gist registry library and automatic number claiming functions (completed 2026-05-19)
-- [ ] **Phase 2: CC Hook Integration** - Claude Code PreToolUse hooks intercept GSD commands and claim numbers before execution
+- [ ] **Phase 2: CC Hook Integration** - Claude Code UserPromptExpansion hooks intercept GSD commands and claim numbers before execution
 - [ ] **Phase 3: Git Merge Validation** - Pre-merge-commit hook validates planning file integrity before merge to development
 - [ ] **Phase 4: Setup & Release Lifecycle** - One-command install, onboarding docs, and stale entry cleanup
 
@@ -45,7 +45,14 @@ Plans:
   2. Running `/gsd-new-phase` in a CC session triggers the hook before execution and the claimed number appears in the registry
   3. When the hook encounters an error (gist unreachable, auth failure), it exits with code 2 and the GSD command is blocked — not silently skipped
   4. Hook stdout produces no shell profile contamination — output is clean JSON or empty
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 02-01-PLAN.md — settings.json wiring + both CC wrapper scripts (milestone and phase)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 02-02-PLAN.md — Live CC session verification: hooks fire, block on failure (exit 2), inject additionalContext
 
 ### Phase 3: Git Merge Validation
 **Goal:** Merging a feature branch to development triggers automated validation of planning file integrity, surfacing gaps, duplicates, and drift with exact actionable fix commands.
@@ -76,10 +83,10 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Registry & Allocation Core | 3/3 | Complete   | 2026-05-19 |
-| 2. CC Hook Integration | 0/? | Not started | - |
+| 2. CC Hook Integration | 0/2 | Not started | - |
 | 3. Git Merge Validation | 0/? | Not started | - |
 | 4. Setup & Release Lifecycle | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-05-19*
-*Last updated: 2026-05-19 after Phase 1 plans created*
+*Last updated: 2026-05-19 after Phase 2 plans created*
