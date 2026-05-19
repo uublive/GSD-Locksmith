@@ -8,7 +8,7 @@
 ## Phases
 
 - [x] **Phase 1: Registry & Allocation Core** - Shared gist registry library and automatic number claiming functions (completed 2026-05-19)
-- [ ] **Phase 2: CC Hook Integration** - Claude Code UserPromptExpansion hooks intercept GSD commands and claim numbers before execution
+- [x] **Phase 2: CC Hook Integration** - PreToolUse on Bash intercepts gsd-sdk init calls for milestone/phase creation; terminal smoke tests pass; live CC session test deferred to next milestone (completed 2026-05-19)
 - [ ] **Phase 3: Git Merge Validation** - Pre-merge-commit hook validates planning file integrity before merge to development
 - [ ] **Phase 4: Setup & Release Lifecycle** - One-command install, onboarding docs, and stale entry cleanup
 
@@ -52,7 +52,7 @@ Plans:
 - [x] 02-01-PLAN.md — settings.json wiring + both CC wrapper scripts (milestone and phase)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 02-02-PLAN.md — Live CC session verification: hooks fire, block on failure (exit 2), inject additionalContext
+- [x] 02-02-PLAN.md — Live CC session verification: terminal smoke tests pass; pivot to PreToolUse on Bash; live CC session test deferred to next milestone (accepted-with-pending 2026-05-19)
 
 ### Phase 3: Git Merge Validation
 **Goal:** Merging a feature branch to development triggers automated validation of planning file integrity, surfacing gaps, duplicates, and drift with exact actionable fix commands.
@@ -82,8 +82,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Registry & Allocation Core | 3/3 | Complete   | 2026-05-19 |
-| 2. CC Hook Integration | 0/2 | Not started | - |
+| 1. Registry & Allocation Core | 3/3 | Complete | 2026-05-19 |
+| 2. CC Hook Integration | 2/2 | Complete (accepted-with-pending) | 2026-05-19 |
 | 3. Git Merge Validation | 0/? | Not started | - |
 | 4. Setup & Release Lifecycle | 0/? | Not started | - |
 
