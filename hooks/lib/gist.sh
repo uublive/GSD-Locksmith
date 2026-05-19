@@ -3,8 +3,7 @@
 # Provides: read_registry(), write_registry()
 # Requires: GIST_ID to be set (via load_config() from common.sh)
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+: "${REPO_ROOT:=$(git rev-parse --show-toplevel)}"
 source "$REPO_ROOT/hooks/lib/common.sh"
 
 GIST_FILE="registry.json"
