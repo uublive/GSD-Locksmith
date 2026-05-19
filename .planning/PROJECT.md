@@ -12,12 +12,15 @@ No more manual Slack coordination to claim milestone and phase numbers — the t
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Automatic milestone number allocation via shared gist registry — Phase 1
+- ✓ Automatic phase number allocation via shared gist registry — Phase 1
+- ✓ Shared gist registry with branch and ownership metadata — Phase 1
+- ✓ Best-effort concurrency on gist read/write — Phase 1
+- ✓ Registry status command (gsd-status) — Phase 1
 
 ### Active
 
-- [ ] Automatic milestone number allocation via shared gist registry
-- [ ] Automatic phase number allocation via shared gist registry
+- [ ] Claude Code hooks that intercept milestone/phase creation commands
 - [ ] Claude Code hooks that intercept milestone/phase creation commands
 - [ ] Git hooks that validate planning file integrity on merge to development
 - [ ] Phase numbering gap detection
@@ -79,4 +82,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-19 after initialization*
+*Last updated: 2026-05-19 after Phase 1 completion*
