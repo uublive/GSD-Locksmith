@@ -7,7 +7,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Registry & Allocation Core** - Shared gist registry library and automatic number claiming functions
+- [x] **Phase 1: Registry & Allocation Core** - Shared gist registry library and automatic number claiming functions (completed 2026-05-19)
 - [ ] **Phase 2: CC Hook Integration** - Claude Code PreToolUse hooks intercept GSD commands and claim numbers before execution
 - [ ] **Phase 3: Git Merge Validation** - Pre-merge-commit hook validates planning file integrity before merge to development
 - [ ] **Phase 4: Setup & Release Lifecycle** - One-command install, onboarding docs, and stale entry cleanup
@@ -25,7 +25,7 @@
   3. Developer can run `read_registry()` and `write_registry()` calls that reliably round-trip JSON claims to/from the shared gist
   4. Developer can call the allocation function and receive the next available milestone or phase number, written to the registry with branch, owner, and timestamp
   5. Developer can set `GSD_DRY_RUN=1` to preview what number would be claimed without writing, and `GSD_VERBOSE=1` to see each gist API call
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -33,7 +33,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [x] 01-02-PLAN.md — Allocation hardening: collision detection, retry loop, dry-run and verbose modes
-- [ ] 01-03-PLAN.md — Status command: gsd-status.sh formatted active claims table
+- [x] 01-03-PLAN.md — Status command: gsd-status.sh formatted active claims table
 
 ### Phase 2: CC Hook Integration
 **Goal:** Claude Code automatically intercepts `/gsd-new-milestone` and `/gsd-new-phase` commands and claims the next number from the registry before the GSD command executes, blocking on failure.
@@ -75,7 +75,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Registry & Allocation Core | 2/3 | In Progress|  |
+| 1. Registry & Allocation Core | 3/3 | Complete   | 2026-05-19 |
 | 2. CC Hook Integration | 0/? | Not started | - |
 | 3. Git Merge Validation | 0/? | Not started | - |
 | 4. Setup & Release Lifecycle | 0/? | Not started | - |

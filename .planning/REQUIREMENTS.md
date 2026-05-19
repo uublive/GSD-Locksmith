@@ -12,7 +12,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **REG-01**: Developer can configure shared gist ID in committed project config file
 - [x] **REG-02**: Registry stores milestone/phase claims with branch, owner, and timestamp metadata
 - [x] **REG-03**: Shell library provides `read_registry()` and `write_registry()` functions for all gist operations
-- [ ] **REG-04**: Developer can view all active claims with `gsd-status` (who, what number, which branch)
+- [x] **REG-04**: Developer can view all active claims with `gsd-status` (who, what number, which branch)
 - [x] **REG-05**: Every script validates `jq`, `gh`, and auth status before executing
 
 ### Allocation
@@ -75,7 +75,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-01 | Phase 1 | Complete |
 | REG-02 | Phase 1 | Complete |
 | REG-03 | Phase 1 | Complete |
-| REG-04 | Phase 1 | Pending |
+| REG-04 | Phase 1 | Complete |
 | REG-05 | Phase 1 | Complete |
 | ALLOC-01 | Phase 1 | Complete |
 | ALLOC-02 | Phase 1 | Complete |
