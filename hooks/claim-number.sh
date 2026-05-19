@@ -146,10 +146,14 @@ else
   echo "WARNING: Collision detected on $TYPE $NEXT_NUM — another developer claimed it first. Retrying..." >&2
   echo "Competing owner: $COMPETING_OWNER" >&2
 
-  # Retry: recompute NEXT_NUM from fresh registry data
+  # Retry: strip our own stale active claims from the first (losing) write,
+  # then recompute NEXT_NUM from the cleaned registry to avoid permanent orphan entries
   if [[ "$TYPE" == "milestone" ]]; then
-    NEXT_NUM="$(echo "$REGISTRY_AFTER" | jq '[.claims[] | select(.type=="milestone" and .status=="active") | .number] | if length == 0 then 1 else max + 1 end')"
-    UPDATED_REGISTRY="$(echo "$REGISTRY_AFTER" | jq \
+    CLEAN_REGISTRY="$(echo "$REGISTRY_AFTER" | jq \
+      --arg o "$owner" \
+      'del(.claims[] | select(.owner==$o and .status=="active" and (.type=="milestone" or .type=="phase")))')"
+    NEXT_NUM="$(echo "$CLEAN_REGISTRY" | jq '[.claims[] | select(.type=="milestone" and .status=="active") | .number] | if length == 0 then 1 else max + 1 end')"
+    UPDATED_REGISTRY="$(echo "$CLEAN_REGISTRY" | jq \
       --argjson m "$NEXT_NUM" \
       --arg owner "$owner" \
       --arg branch "$branch" \
@@ -159,8 +163,11 @@ else
         {"type":"phase","number":1,"milestone":$m,"owner":$owner,"branch":$branch,"claimed_at":$claimed_at,"status":"active"}
       ]')"
   else
-    NEXT_NUM="$(echo "$REGISTRY_AFTER" | jq --argjson m "$MILESTONE_NUM" '[.claims[] | select(.type=="phase" and .status=="active" and .milestone==$m) | .number] | if length == 0 then 1 else max + 1 end')"
-    UPDATED_REGISTRY="$(echo "$REGISTRY_AFTER" | jq \
+    CLEAN_REGISTRY="$(echo "$REGISTRY_AFTER" | jq \
+      --arg o "$owner" --argjson m "$MILESTONE_NUM" \
+      'del(.claims[] | select(.owner==$o and .status=="active" and .type=="phase" and .milestone==$m))')"
+    NEXT_NUM="$(echo "$CLEAN_REGISTRY" | jq --argjson m "$MILESTONE_NUM" '[.claims[] | select(.type=="phase" and .status=="active" and .milestone==$m) | .number] | if length == 0 then 1 else max + 1 end')"
+    UPDATED_REGISTRY="$(echo "$CLEAN_REGISTRY" | jq \
       --argjson n "$NEXT_NUM" \
       --argjson m "$MILESTONE_NUM" \
       --arg owner "$owner" \
