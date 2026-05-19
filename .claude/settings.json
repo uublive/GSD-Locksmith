@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "UserPromptExpansion": [
+      {
+        "matcher": "gsd-new-milestone",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/cc-claim-milestone.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "gsd-new-phase",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "hooks/cc-claim-phase.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
