@@ -15,13 +15,10 @@ read_registry() {
 
 write_registry() {
   local content="$1"
-  local tmpfile
-  tmpfile="$(mktemp /tmp/gsd-registry-XXXXXX.json)"
-  printf '%s' "$content" > "$tmpfile"
   verbose_log "Writing registry to gist $GIST_ID"
+  local payload
+  payload=$(jq -n --arg c "$content" '{"files":{"registry.json":{"content":$c}}}')
   local rc=0
-  gh api --method PATCH "/gists/$GIST_ID" \
-    --field "files[registry.json][content]=@$tmpfile" || rc=$?
-  rm -f "$tmpfile"
+  echo "$payload" | gh api --method PATCH "/gists/$GIST_ID" --input - > /dev/null || rc=$?
   return $rc
 }
