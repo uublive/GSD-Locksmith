@@ -28,10 +28,8 @@ if [[ "$ACTIVE_COUNT" -eq 0 ]]; then
   exit 0
 fi
 
-# Render table header
-printf "%-12s %-8s %-10s %-12s %-25s %-20s\n" "TYPE" "NUMBER" "MILESTONE" "OWNER" "BRANCH" "CLAIMED_AT"
-printf "%s\n" "---------------------------------------------------------------------------------------------"
-
-# Render active claims: sort by type then number, pipe through column for alignment
-echo "$REGISTRY" | jq -r '[.claims[] | select(.status=="active")] | sort_by(.type, .number) | .[] | [.type, (.number|tostring), (.milestone // "-"|tostring), .owner, .branch, .claimed_at] | @tsv' \
-  | column -t -s $'\t'
+# Render header and active claims together through column -t for consistent alignment
+{
+  printf "%s\t%s\t%s\t%s\t%s\t%s\n" "TYPE" "NUMBER" "MILESTONE" "OWNER" "BRANCH" "CLAIMED_AT"
+  echo "$REGISTRY" | jq -r '[.claims[] | select(.status=="active")] | sort_by(.type, .number) | .[] | [.type, (.number|tostring), (.milestone // "-"|tostring), .owner, .branch, .claimed_at] | @tsv'
+} | column -t -s $'\t'
