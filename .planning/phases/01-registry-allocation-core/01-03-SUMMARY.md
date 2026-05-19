@@ -38,7 +38,7 @@ patterns-established:
 
 requirements-completed: [REG-04]
 
-duration: 2min
+duration: 5min
 completed: 2026-05-19
 ---
 
@@ -48,10 +48,10 @@ completed: 2026-05-19
 
 ## Performance
 
-- **Duration:** ~2 min
+- **Duration:** ~5 min
 - **Started:** 2026-05-19T13:38:57Z
-- **Completed:** 2026-05-19T13:40:04Z
-- **Tasks:** 1 of 2 complete (Task 2 is a human-verify checkpoint — awaiting user verification)
+- **Completed:** 2026-05-19T13:44:00Z
+- **Tasks:** 2 of 2 complete (Task 2 human-verify checkpoint: approved)
 - **Files created:** 1
 
 ## Accomplishments
@@ -68,9 +68,18 @@ completed: 2026-05-19
 Each task was committed atomically:
 
 1. **Task 1: Status display command** - `07cda12` (feat)
-2. **Task 2: Human-verify checkpoint** — awaiting user verification
+2. **Task 2: Human-verify checkpoint** — APPROVED (all 4 verification steps passed)
 
 **Plan metadata:** _(final docs commit — see below)_
+
+## Human Verification Results
+
+All 4 checkpoint steps passed:
+- claim-number.sh milestone produced "Claimed milestone 1 and phase 1 of milestone 1"
+- gsd-status.sh rendered formatted table with 2 rows (milestone + phase)
+- GSD_DRY_RUN=1 printed "[DRY RUN] Would claim:" lines to stderr, no gist write
+- GSD_VERBOSE=1 showed full [GSD] log trace with read/write/collision-check
+- Error handling: missing args exits 2 with usage message on stderr
 
 ## Files Created/Modified
 
@@ -110,4 +119,4 @@ Then follow the 4 verification steps in the checkpoint.
 
 ---
 *Phase: 01-registry-allocation-core*
-*Completed: 2026-05-19 (pending checkpoint approval)*
+*Completed: 2026-05-19 (human-verify checkpoint approved)*
