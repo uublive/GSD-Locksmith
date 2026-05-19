@@ -25,14 +25,14 @@
   3. Developer can run `read_registry()` and `write_registry()` calls that reliably round-trip JSON claims to/from the shared gist
   4. Developer can call the allocation function and receive the next available milestone or phase number, written to the registry with branch, owner, and timestamp
   5. Developer can set `GSD_DRY_RUN=1` to preview what number would be claimed without writing, and `GSD_VERBOSE=1` to see each gist API call
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 
 Plans:
 **Wave 1**
 - [x] 01-01-PLAN.md — Walking Skeleton: config file, common.sh, gist.sh, thin claim-number.sh end-to-end
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01-02-PLAN.md — Allocation hardening: collision detection, retry loop, dry-run and verbose modes
+- [x] 01-02-PLAN.md — Allocation hardening: collision detection, retry loop, dry-run and verbose modes
 - [ ] 01-03-PLAN.md — Status command: gsd-status.sh formatted active claims table
 
 ### Phase 2: CC Hook Integration
@@ -75,7 +75,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Registry & Allocation Core | 0/3 | Not started | - |
+| 1. Registry & Allocation Core | 2/3 | In Progress|  |
 | 2. CC Hook Integration | 0/? | Not started | - |
 | 3. Git Merge Validation | 0/? | Not started | - |
 | 4. Setup & Release Lifecycle | 0/? | Not started | - |

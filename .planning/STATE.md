@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-05-19T13:31:47.623Z"
+last_updated: "2026-05-19T13:37:39.234Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
-  percent: 33
+  completed_plans: 2
+  percent: 67
 ---
 
 # STATE: GSD Team Coordination Plugins
@@ -22,15 +22,15 @@ progress:
 ## Current Position
 
 Phase: 01 (Registry & Allocation Core) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 **Milestone:** 1
 **Phase:** 1 — Registry & Allocation Core
-**Plan:** 01-01 — Config + Library Foundation + Walking Skeleton (COMPLETE)
+**Plan:** 01-02 — Collision Detection + Dry-Run + Verbose Hardening (COMPLETE)
 **Status:** Executing Phase 01
 
 ```
-Progress: [███░░░░░░░] 33%
-Phase 1 ░░░░░░░░░░
+Progress: [██████░░░░] 67%
+Phase 1 ██████░░░░
 Phase 2 ░░░░░░░░░░
 Phase 3 ░░░░░░░░░░
 Phase 4 ░░░░░░░░░░
@@ -38,10 +38,10 @@ Phase 4 ░░░░░░░░░░
 
 ## Performance Metrics
 
-**Plans completed:** 1 (01-01)
+**Plans completed:** 2 (01-01, 01-02)
 **Plans in progress:** 0
 **Phases completed:** 0 / 4
-**Requirements covered:** 6 / 22 (REG-01, REG-02, REG-03, REG-05, ALLOC-01, ALLOC-02)
+**Requirements covered:** 9 / 22 (REG-01, REG-02, REG-03, REG-05, ALLOC-01, ALLOC-02, ALLOC-03, ALLOC-04, ALLOC-05)
 
 ## Accumulated Context
 
@@ -56,6 +56,10 @@ Phase 4 ░░░░░░░░░░
 - [01-01] verbose_log uses ${GSD_VERBOSE:-} default expansion for set -u compatibility in callers
 - [01-01] write_registry uses printf not echo to avoid flag interpretation in some shells
 - [01-01] gh gist edit with tmpfile as last arg — verified non-interactive write pattern (not gh api PATCH)
+- [01-02] verbose_log requires || true: [[ -n '' ]] && echo returns exit 1; set -e in callers traps this as fatal error
+- [01-02] Dry-run format: "Would claim:" not "Would write claim:" per ALLOC-04 spec
+- [01-02] First collision: unconditional WARNING to stderr with competing owner name before retry
+- [01-02] Second collision: exit 2 with ERROR naming competing owner and manual resolution instructions
 
 ### Key Technical Constraints
 
@@ -75,8 +79,8 @@ Phase 4 ░░░░░░░░░░
 
 ## Session Continuity
 
-**Last session:** 2026-05-19T13:31:47.617Z
-**Next action:** Execute Phase 01 Plan 02 (gsd-status.sh) or continue with next plan in 01-registry-allocation-core
+**Last session:** 2026-05-19T13:47:00Z
+**Next action:** Execute Phase 01 Plan 03 (gsd-status.sh) — final plan in phase 01
 
 ---
 *STATE.md initialized: 2026-05-19*

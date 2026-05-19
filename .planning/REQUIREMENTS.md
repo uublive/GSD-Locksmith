@@ -19,9 +19,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **ALLOC-01**: System claims next available milestone number from registry automatically
 - [x] **ALLOC-02**: System claims next available phase number within a milestone from registry automatically
-- [ ] **ALLOC-03**: System detects last-write-wins race and displays collision warning with rollback instructions
-- [ ] **ALLOC-04**: Developer can preview allocation without writing via `GSD_DRY_RUN=1` env var
-- [ ] **ALLOC-05**: Developer can see detailed operation logs via `GSD_VERBOSE=1` env var
+- [x] **ALLOC-03**: System detects last-write-wins race and displays collision warning with rollback instructions
+- [x] **ALLOC-04**: Developer can preview allocation without writing via `GSD_DRY_RUN=1` env var
+- [x] **ALLOC-05**: Developer can see detailed operation logs via `GSD_VERBOSE=1` env var
 
 ### Hooks
 
@@ -79,9 +79,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-05 | Phase 1 | Complete |
 | ALLOC-01 | Phase 1 | Complete |
 | ALLOC-02 | Phase 1 | Complete |
-| ALLOC-03 | Phase 1 | Pending |
-| ALLOC-04 | Phase 1 | Pending |
-| ALLOC-05 | Phase 1 | Pending |
+| ALLOC-03 | Phase 1 | Complete |
+| ALLOC-04 | Phase 1 | Complete |
+| ALLOC-05 | Phase 1 | Complete |
 | HOOK-01 | Phase 2 | Pending |
 | HOOK-02 | Phase 2 | Pending |
 | HOOK-03 | Phase 2 | Pending |
