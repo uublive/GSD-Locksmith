@@ -17,9 +17,11 @@ write_registry() {
   local content="$1"
   local tmpfile
   tmpfile="$(mktemp /tmp/gsd-registry-XXXXXX.json)"
-  trap 'rm -f "$tmpfile"' EXIT
   printf '%s' "$content" > "$tmpfile"
   verbose_log "Writing registry to gist $GIST_ID"
+  local rc=0
   gh api --method PATCH "/gists/$GIST_ID" \
-    --field "files[registry.json][content]=@$tmpfile"
+    --field "files[registry.json][content]=@$tmpfile" || rc=$?
+  rm -f "$tmpfile"
+  return $rc
 }
