@@ -9,7 +9,7 @@
 
 - [x] **Phase 1: Registry & Allocation Core** - Shared gist registry library and automatic number claiming functions (completed 2026-05-19)
 - [x] **Phase 2: CC Hook Integration** - PreToolUse on Bash intercepts gsd-sdk init calls for milestone/phase creation; terminal smoke tests pass; live CC session test deferred to next milestone (completed 2026-05-19)
-- [ ] **Phase 3: Git Merge Validation** - Pre-merge-commit hook validates planning file integrity before merge to development
+- [x] **Phase 3: Git Merge Validation** - Pre-merge-commit hook validates planning file integrity before merge to development (completed 2026-05-20)
 - [ ] **Phase 4: Setup & Release Lifecycle** - One-command install, onboarding docs, and stale entry cleanup
 
 ## Phase Details
@@ -65,14 +65,14 @@ Plans:
   3. Merging a branch where STATE.md active phase does not match ROADMAP.md is blocked with the conflicting values shown
   4. Merging a branch with a plan referencing a removed requirement or phase is blocked with the stale reference and its location shown
   5. Every validation error message includes the file path, line number, and an exact command the developer can run to fix it
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 **Wave 1**
 - [x] 03-01-PLAN.md — Validation library: hooks/lib/validate.sh (4 functions) + tests/test-validate.sh fixture harness
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 03-02-PLAN.md — Hook wrapper: .githooks/pre-merge-commit thin wrapper + human-verify checkpoint
+- [x] 03-02-PLAN.md — Hook wrapper: .githooks/pre-merge-commit thin wrapper + human-verify checkpoint
 
 ### Phase 4: Setup & Release Lifecycle
 **Goal:** A new developer can join the team, run one install script, and be fully configured in under 5 minutes; stale registry entries from deleted or merged branches are cleaned up automatically.
@@ -91,7 +91,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Registry & Allocation Core | 3/3 | Complete | 2026-05-19 |
 | 2. CC Hook Integration | 2/2 | Complete (accepted-with-pending) | 2026-05-19 |
-| 3. Git Merge Validation | 1/2 | In Progress|  |
+| 3. Git Merge Validation | 2/2 | Complete   | 2026-05-20 |
 | 4. Setup & Release Lifecycle | 0/? | Not started | - |
 
 ---
