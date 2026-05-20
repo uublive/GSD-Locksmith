@@ -83,7 +83,12 @@ Plans:
   1. Running the install script configures both the git hook (via `core.hooksPath`) and the CC hook entry in `settings.json` without manual edits
   2. The onboarding README lists prerequisites, the one-time gist creation step, and the install command — a developer with no prior context can follow it successfully
   3. When a branch is deleted or merged, its registry entries are automatically released so the numbers become available again
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+**Wave 1** *(both plans independent — run in parallel)*
+- [ ] 04-01-PLAN.md — Install script + onboarding README (SETUP-01, SETUP-02)
+- [ ] 04-02-PLAN.md — post-merge stale cleanup hook (SETUP-03)
 
 ## Progress Table
 
@@ -92,8 +97,8 @@ Plans:
 | 1. Registry & Allocation Core | 3/3 | Complete | 2026-05-19 |
 | 2. CC Hook Integration | 2/2 | Complete (accepted-with-pending) | 2026-05-19 |
 | 3. Git Merge Validation | 2/2 | Complete   | 2026-05-20 |
-| 4. Setup & Release Lifecycle | 0/? | Not started | - |
+| 4. Setup & Release Lifecycle | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-05-19*
-*Last updated: 2026-05-20 after Phase 3 plans created*
+*Last updated: 2026-05-20 after Phase 4 plans created*
