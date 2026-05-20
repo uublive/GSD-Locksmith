@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 03 complete — 03-02 checkpoint approved-deferred
-last_updated: "2026-05-20T12:21:02.341Z"
+last_updated: "2026-05-20T14:47:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 9
-  completed_plans: 7
-  percent: 78
+  completed_plans: 8
+  percent: 89
 ---
 
 # STATE: GSD Team Coordination Plugins
@@ -18,37 +18,38 @@ progress:
 ## Project Reference
 
 **Core value:** No more manual Slack coordination to claim milestone and phase numbers — the tooling handles it automatically so the team can work independently without collisions.
-**Current focus:** Phase 03 — Git Merge Validation
+**Current focus:** Phase 04 — Setup & Release Lifecycle
 
 ## Current Position
 
-Phase: 03 (Git Merge Validation) — EXECUTING
-Plan: 1 of 2
+Phase: 04 (Setup & Release Lifecycle) — EXECUTING
+Plan: 2 of 2
 **Milestone:** 1
 **Phase:** 4
-**Plan:** Not started
-**Status:** Ready to execute
+**Plan:** 04-01 complete, 04-02 remaining
+**Status:** Executing Phase 04
 
 ```
-Progress: [██████████] 100%
+Progress: [█████████░] 89%
 Phase 1 ██████████  (3 of 3 plans complete)
 Phase 2 ██████████  (2 of 2 plans complete)
-Phase 3 ░░░░░░░░░░  (not started)
-Phase 4 ░░░░░░░░░░  (not started)
+Phase 3 ██████████  (2 of 2 plans complete)
+Phase 4 █████░░░░░  (1 of 2 plans complete)
 ```
 
 ## Performance Metrics
 
-**Plans completed:** 5 (01-01, 01-02, 01-03, 02-01, 02-02)
+**Plans completed:** 8 (01-01, 01-02, 01-03, 02-01, 02-02, 03-01, 03-02, 04-01)
 **Plans in progress:** 0
-**Phases completed:** 2 / 4 (Phases 1 and 2 complete; Phases 3 and 4 not started)
-**Requirements covered:** 14 / 22 (REG-01..REG-05, ALLOC-01..ALLOC-05, HOOK-01, HOOK-02, HOOK-03, HOOK-04)
+**Phases completed:** 3 / 4 (Phases 1, 2, and 3 complete; Phase 4 in progress)
+**Requirements covered:** 16 / 22 (REG-01..REG-05, ALLOC-01..ALLOC-05, HOOK-01..HOOK-04, VAL-01..VAL-05 [partial], SETUP-01, SETUP-02)
 
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | 02-01 | 25 min | 3 | 3 |
 | 02-02 | 40 min | 2 | 2 |
 | Phase 03-git-merge-validation P02 | 15min | 2 tasks | 1 files |
+| 04-01 | 25 min | 2 | 2 |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Phase 4 ░░░░░░░░░░  (not started)
 - [02-02] macOS mktemp rejects suffix in template (XXXXXX.json); eliminated tmpfile by piping jq JSON payload to gh api via --input stdin
 - [02-02] Human-verify checkpoint accepted-with-pending: live CC session test deferred to next milestone start
 - [Phase 03]: 03-02 checkpoint approved-deferred: Steps 1-3 accepted, live merge-blocking test deferred to next milestone start
+- [04-01] jq select(.command | test()) used to detect existing CC hook entry — robust against JSON structure differences
+- [04-01] Atomic write: jq to tmpfile + jq -e validate + mv — prevents corrupt settings.json if jq fails (T-04-01)
+- [04-01] README separates team-lead step (gist creation) from per-developer step (install) to prevent setup confusion
 
 ### Key Technical Constraints
 
@@ -98,9 +102,9 @@ Phase 4 ░░░░░░░░░░  (not started)
 
 ## Session Continuity
 
-**Last session:** 2026-05-20T11:47:53.166Z
-**Stopped at:** Phase 03 complete — 03-02 checkpoint approved-deferred
-**Next action:** Begin Phase 03 (git-hook-validation). Note: run live CC session tests (02-02 task 2 how-to-verify) at next milestone start before relying on PreToolUse hook in production.
+**Last session:** 2026-05-20T14:47:00.000Z
+**Stopped at:** Phase 04 plan 01 complete — install script and onboarding README delivered
+**Next action:** Execute 04-02-PLAN.md (post-merge stale cleanup hook, SETUP-03). Note: run live CC session tests (02-02 task 2 how-to-verify) at next milestone start before relying on PreToolUse hook in production.
 
 ---
 *STATE.md initialized: 2026-05-19*
