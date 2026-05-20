@@ -10,7 +10,7 @@
 - [x] **Phase 1: Registry & Allocation Core** - Shared gist registry library and automatic number claiming functions (completed 2026-05-19)
 - [x] **Phase 2: CC Hook Integration** - PreToolUse on Bash intercepts gsd-sdk init calls for milestone/phase creation; terminal smoke tests pass; live CC session test deferred to next milestone (completed 2026-05-19)
 - [x] **Phase 3: Git Merge Validation** - Pre-merge-commit hook validates planning file integrity before merge to development (completed 2026-05-20)
-- [ ] **Phase 4: Setup & Release Lifecycle** - One-command install, onboarding docs, and stale entry cleanup
+- [x] **Phase 4: Setup & Release Lifecycle** - One-command install, onboarding docs, and stale entry cleanup (completed 2026-05-20)
 
 ## Phase Details
 
@@ -97,8 +97,8 @@ Plans:
 | 1. Registry & Allocation Core | 3/3 | Complete | 2026-05-19 |
 | 2. CC Hook Integration | 2/2 | Complete (accepted-with-pending) | 2026-05-19 |
 | 3. Git Merge Validation | 2/2 | Complete   | 2026-05-20 |
-| 4. Setup & Release Lifecycle | 2/2 | Complete (04-02 checkpoint pending) | 2026-05-20 |
+| 4. Setup & Release Lifecycle | 2/2 | Complete (live merge test deferred to next milestone) | 2026-05-20 |
 
 ---
 *Roadmap created: 2026-05-19*
-*Last updated: 2026-05-20 after Phase 4 plans created*
+*Last updated: 2026-05-20 — Milestone 1 complete, all 9 plans delivered*

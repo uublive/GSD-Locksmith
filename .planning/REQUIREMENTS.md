@@ -40,9 +40,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Setup
 
-- [ ] **SETUP-01**: One-command install script configures git hooks and CC hook settings
-- [ ] **SETUP-02**: Onboarding README documents prerequisites and setup checklist
-- [ ] **SETUP-03**: Stale registry entries are auto-released when branches are deleted or merged
+- [x] **SETUP-01**: One-command install script configures git hooks and CC hook settings
+- [x] **SETUP-02**: Onboarding README documents prerequisites and setup checklist
+- [x] **SETUP-03**: Stale registry entries are auto-released when branches are deleted or merged
 
 ## v2 Requirements
 
@@ -91,9 +91,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VAL-03 | Phase 3 | Complete |
 | VAL-04 | Phase 3 | Complete |
 | VAL-05 | Phase 3 | Complete |
-| SETUP-01 | Phase 4 | Pending |
-| SETUP-02 | Phase 4 | Pending |
-| SETUP-03 | Phase 4 | Pending |
+| SETUP-01 | Phase 4 | Complete |
+| SETUP-02 | Phase 4 | Complete |
+| SETUP-03 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total
