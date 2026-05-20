@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# .githooks/pre-merge-commit
+#
+# Phase:    03-git-merge-validation
+# Purpose:  Thin wrapper — validate GSD planning file integrity on merges to
+#           development/develop branches. Sources hooks/lib/validate.sh and
+#           runs all four integrity checks before the merge commit is created.
+#
+# Limitation: This hook does NOT fire on conflicted merges (git pre-merge-commit
+#             only fires on auto-resolved merges). Manually resolved conflict
+#             commits fire pre-commit instead — see RESEARCH.md Pitfall 5.
+#
+# Activate:  git config core.hooksPath .githooks
+# Bypass:    git merge --no-verify (accepted per project scope — trusted team)
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+# shellcheck source=hooks/lib/validate.sh
+source "$REPO_ROOT/hooks/lib/validate.sh"
+
+# D-08: Only validate merges to development/develop.
+# git rev-parse --abbrev-ref HEAD returns the merge TARGET branch (the
+# currently checked-out branch when git merge is run), not the source.
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$CURRENT_BRANCH" != "development" && "$CURRENT_BRANCH" != "develop" ]]; then
+  exit 0
+fi
+
+# D-09: Collect all errors before exiting — devs see ALL problems at once.
+# The || ERRORS=$((ERRORS + $?)) pattern captures the function return code
+# without triggering set -e (no set +e / set -e sandwich needed; functions
+# use return not exit, so || safely handles the non-zero return).
+ERRORS=0
+check_phase_gaps          || ERRORS=$((ERRORS + $?))
+check_duplicate_req_ids   || ERRORS=$((ERRORS + $?))
+check_state_drift         || ERRORS=$((ERRORS + $?))
+check_stale_refs          || ERRORS=$((ERRORS + $?))
+
+if [[ "$ERRORS" -gt 0 ]]; then
+  echo ".planning: $ERRORS integrity violation(s). Fix above errors and retry the merge." >&2
+  exit 1
+fi
+
+exit 0
