@@ -32,11 +32,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Validation
 
-- [ ] **VAL-01**: Git pre-merge-commit hook detects phase numbering gaps in ROADMAP.md
-- [ ] **VAL-02**: Git pre-merge-commit hook detects duplicate REQ-IDs in REQUIREMENTS.md
-- [ ] **VAL-03**: Git pre-merge-commit hook detects STATE.md drift (active phase doesn't match ROADMAP.md)
-- [ ] **VAL-04**: Git pre-merge-commit hook detects stale cross-references (plans referencing removed requirements/phases)
-- [ ] **VAL-05**: Validation errors show file, line, and exact fix command
+- [x] **VAL-01**: Git pre-merge-commit hook detects phase numbering gaps in ROADMAP.md
+- [x] **VAL-02**: Git pre-merge-commit hook detects duplicate REQ-IDs in REQUIREMENTS.md
+- [x] **VAL-03**: Git pre-merge-commit hook detects STATE.md drift (active phase doesn't match ROADMAP.md)
+- [x] **VAL-04**: Git pre-merge-commit hook detects stale cross-references (plans referencing removed requirements/phases)
+- [x] **VAL-05**: Validation errors show file, line, and exact fix command
 
 ### Setup
 
@@ -86,11 +86,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOOK-02 | Phase 2 | Complete |
 | HOOK-03 | Phase 2 | Complete |
 | HOOK-04 | Phase 2 | Complete |
-| VAL-01 | Phase 3 | Pending |
-| VAL-02 | Phase 3 | Pending |
-| VAL-03 | Phase 3 | Pending |
-| VAL-04 | Phase 3 | Pending |
-| VAL-05 | Phase 3 | Pending |
+| VAL-01 | Phase 3 | Complete |
+| VAL-02 | Phase 3 | Complete |
+| VAL-03 | Phase 3 | Complete |
+| VAL-04 | Phase 3 | Complete |
+| VAL-05 | Phase 3 | Complete |
 | SETUP-01 | Phase 4 | Pending |
 | SETUP-02 | Phase 4 | Pending |
 | SETUP-03 | Phase 4 | Pending |
