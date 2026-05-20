@@ -88,7 +88,7 @@ Plans:
 Plans:
 **Wave 1** *(both plans independent — run in parallel)*
 - [x] 04-01-PLAN.md — Install script + onboarding README (SETUP-01, SETUP-02)
-- [ ] 04-02-PLAN.md — post-merge stale cleanup hook (SETUP-03)
+- [x] 04-02-PLAN.md — post-merge stale cleanup hook (SETUP-03)
 
 ## Progress Table
 
@@ -97,7 +97,7 @@ Plans:
 | 1. Registry & Allocation Core | 3/3 | Complete | 2026-05-19 |
 | 2. CC Hook Integration | 2/2 | Complete (accepted-with-pending) | 2026-05-19 |
 | 3. Git Merge Validation | 2/2 | Complete   | 2026-05-20 |
-| 4. Setup & Release Lifecycle | 1/2 | In progress | - |
+| 4. Setup & Release Lifecycle | 2/2 | Complete (04-02 checkpoint pending) | 2026-05-20 |
 
 ---
 *Roadmap created: 2026-05-19*
