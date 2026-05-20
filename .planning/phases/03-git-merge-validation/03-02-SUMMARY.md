@@ -50,8 +50,8 @@ completed: 2026-05-20
 
 - **Duration:** ~15 min
 - **Started:** 2026-05-20T10:47:16Z
-- **Completed:** 2026-05-20T10:57:00Z (Task 1 complete; checkpoint pending user verification)
-- **Tasks:** 1 of 2 complete (Task 2 is checkpoint:human-verify)
+- **Completed:** 2026-05-20T10:57:00Z (checkpoint approved-deferred: Steps 1-3 accepted, Step 4 live merge-blocking test deferred to next milestone start)
+- **Tasks:** 2 of 2 complete (Task 2 checkpoint approved-deferred)
 - **Files modified:** 1 created
 
 ## Accomplishments
@@ -67,7 +67,7 @@ completed: 2026-05-20
 
 1. **Task 1: Create .githooks/pre-merge-commit wrapper** - `7685884` (feat)
 
-**Plan metadata:** pending (docs commit follows after checkpoint approval)
+**Plan metadata:** see docs commit (follows checkpoint approval)
 
 ## Files Created/Modified
 
@@ -83,6 +83,13 @@ completed: 2026-05-20
 ## Deviations from Plan
 
 None - plan executed exactly as written.
+
+## Checkpoint Status
+
+**Task 2 (checkpoint:human-verify):** Approved-deferred by user.
+
+- Steps 1-3 accepted (tests pass, hook activated via `git config core.hooksPath .githooks`, executable permissions confirmed).
+- Step 4 (live merge-blocking test with seeded planning file violation) deferred to next milestone start alongside 02-02 live CC session test.
 
 ## Issues Encountered
 
@@ -105,8 +112,14 @@ git config core.hooksPath
 ## Next Phase Readiness
 
 - `.githooks/pre-merge-commit` is ready to activate. Developer runs `git config core.hooksPath .githooks` once.
-- Checkpoint (Task 2) is pending user verification: confirm tests pass, hook is executable, and optionally test blocking behavior by seeding a ROADMAP.md gap and attempting a merge to development.
-- Phase 3 complete after checkpoint approval. Phase 4 (setup script for `scripts/setup-hooks.sh`) can begin.
+- Checkpoint (Task 2) approved-deferred: Steps 1-3 accepted (tests pass, hook executable, skip behavior confirmed). Step 4 (live merge-blocking test with seeded ROADMAP.md gap) deferred to next milestone start alongside 02-02 live CC session test.
+- Phase 3 complete. Phase 4 (setup script for `scripts/setup-hooks.sh`) can begin.
+
+## Self-Check: PASSED
+
+- FOUND: `.planning/phases/03-git-merge-validation/03-02-SUMMARY.md`
+- FOUND: commit `7685884` (feat: .githooks/pre-merge-commit wrapper)
+- FOUND: commit `3289579` (docs: checkpoint-pending summary)
 
 ---
 *Phase: 03-git-merge-validation*
