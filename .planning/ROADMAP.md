@@ -65,7 +65,14 @@ Plans:
   3. Merging a branch where STATE.md active phase does not match ROADMAP.md is blocked with the conflicting values shown
   4. Merging a branch with a plan referencing a removed requirement or phase is blocked with the stale reference and its location shown
   5. Every validation error message includes the file path, line number, and an exact command the developer can run to fix it
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+**Wave 1**
+- [ ] 03-01-PLAN.md — Validation library: hooks/lib/validate.sh (4 functions) + tests/test-validate.sh fixture harness
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 03-02-PLAN.md — Hook wrapper: .githooks/pre-merge-commit thin wrapper + human-verify checkpoint
 
 ### Phase 4: Setup & Release Lifecycle
 **Goal:** A new developer can join the team, run one install script, and be fully configured in under 5 minutes; stale registry entries from deleted or merged branches are cleaned up automatically.
@@ -84,9 +91,9 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Registry & Allocation Core | 3/3 | Complete | 2026-05-19 |
 | 2. CC Hook Integration | 2/2 | Complete (accepted-with-pending) | 2026-05-19 |
-| 3. Git Merge Validation | 0/? | Not started | - |
+| 3. Git Merge Validation | 0/2 | Planned | - |
 | 4. Setup & Release Lifecycle | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-05-19*
-*Last updated: 2026-05-19 after Phase 2 plans created*
+*Last updated: 2026-05-20 after Phase 3 plans created*
