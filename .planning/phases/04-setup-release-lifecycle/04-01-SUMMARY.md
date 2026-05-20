@@ -108,6 +108,15 @@ None.
 
 None. The install script does not introduce new network endpoints, auth paths, or schema changes beyond what was already present. The atomic write pattern addresses T-04-01 (settings.json tampering via corrupt jq output).
 
+## Self-Check: PASSED
+
+- FOUND: scripts/install-hooks.sh
+- FOUND: README-HOOKS.md
+- FOUND: 04-01-SUMMARY.md
+- FOUND: commit 62de9c1 (feat: install script)
+- FOUND: commit a8fc36b (docs: README-HOOKS.md)
+- FOUND: commit 12fced9 (docs: plan metadata)
+
 ---
 *Phase: 04-setup-release-lifecycle*
 *Completed: 2026-05-20*
