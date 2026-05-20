@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # hooks/cc-pretool-claim.sh — PreToolUse hook for Bash tool
 #
-# Intercepts gsd-sdk init calls for new-milestone and new-milestone workflows.
+# Intercepts gsd-sdk init calls for new-milestone and plan-phase workflows.
 # Claims the next number from the shared gist registry and injects it as
 # additionalContext so Claude uses the team-coordinated number.
 #
@@ -59,11 +59,11 @@ if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-milestone|gsd-new-milesto
     "TEAM REGISTRY: Milestone %s claimed (and phase 1). Use milestone number %s for this command."
 fi
 
-if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-milestone.*phase|gsd-new-phase'; then
-  milestone_arg=$(echo "$COMMAND" | grep -oE '[0-9]+' | tail -1 || true)
-  if [[ -n "$milestone_arg" ]]; then
-    claim_and_inject "phase" "phase $milestone_arg" \
-      "TEAM REGISTRY: Phase %s claimed. Use phase number %s for this command."
+if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.plan-phase'; then
+  milestone_num=$(echo "$COMMAND" | grep -oE '[0-9]+' | head -1 || true)
+  if [[ -n "$milestone_num" ]]; then
+    claim_and_inject "phase" "phase $milestone_num" \
+      "TEAM REGISTRY: Phase %s claimed for current milestone. Use phase number %s for this command."
   fi
 fi
 
