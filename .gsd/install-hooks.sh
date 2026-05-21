@@ -3,7 +3,9 @@
 #
 # Configures:
 #   1. git config core.hooksPath .githooks
-#   2. CC hooks in .claude/settings.json (PreToolUse on Write/Edit for ROADMAP gate)
+#   2. CC hooks in .claude/settings.json:
+#      - PreToolUse on Write/Edit for ROADMAP gate (conflict detection)
+#      - PostToolUse on Bash for ownership context injection
 #
 # Prerequisites: jq, git, gh, .claude/gsd-team.json
 # Usage: bash .gsd/install-hooks.sh
@@ -39,42 +41,49 @@ echo "git hooks configured: core.hooksPath = .githooks"
 
 # ── Step 2: Write .claude/settings.json with roadmap gate ────
 SETTINGS_FILE="$REPO_ROOT/.claude/settings.json"
-HOOK_COMMAND='${CLAUDE_PROJECT_DIR}/.gsd/roadmap-gate.sh'
+GATE_CMD='${CLAUDE_PROJECT_DIR}/.gsd/roadmap-gate.sh'
+OWNERSHIP_CMD='${CLAUDE_PROJECT_DIR}/.gsd/ownership-context.sh'
 
 if [[ -f "$SETTINGS_FILE" ]] && jq -e '.hooks.PreToolUse' "$SETTINGS_FILE" &>/dev/null; then
-  # Check if roadmap-gate is already configured
-  ALREADY=$(jq '[.hooks.PreToolUse[] | select(.hooks[]?.command | test("roadmap-gate"))] | length' "$SETTINGS_FILE" 2>/dev/null || echo "0")
-  if [[ "$ALREADY" -gt 0 ]]; then
+  ALREADY_GATE=$(jq '[.hooks.PreToolUse[] | select(.hooks[]?.command | test("roadmap-gate"))] | length' "$SETTINGS_FILE" 2>/dev/null || echo "0")
+  ALREADY_OWN=$(jq '[.hooks.PostToolUse // [] | .[] | select(.hooks[]?.command | test("ownership-context"))] | length' "$SETTINGS_FILE" 2>/dev/null || echo "0")
+
+  if [[ "$ALREADY_GATE" -gt 0 ]] && [[ "$ALREADY_OWN" -gt 0 ]]; then
     echo "CC hooks already configured — skipping"
   else
-    # Replace old hooks with new roadmap gate
     TMPFILE="$(mktemp)"
-    jq -n --arg cmd "$HOOK_COMMAND" '{
+    jq -n --arg gate "$GATE_CMD" --arg own "$OWNERSHIP_CMD" '{
       "hooks": {
         "PreToolUse": [
-          {"matcher": "Write", "hooks": [{"type": "command", "command": $cmd}]},
-          {"matcher": "Edit", "hooks": [{"type": "command", "command": $cmd}]}
+          {"matcher": "Write", "hooks": [{"type": "command", "command": $gate}]},
+          {"matcher": "Edit", "hooks": [{"type": "command", "command": $gate}]}
+        ],
+        "PostToolUse": [
+          {"matcher": "Bash", "hooks": [{"type": "command", "command": $own}]}
         ]
       }
     }' > "$TMPFILE"
     jq -e '.' "$TMPFILE" >/dev/null 2>&1 || { rm -f "$TMPFILE"; echo "ERROR: invalid JSON" >&2; exit 1; }
     mv "$TMPFILE" "$SETTINGS_FILE"
-    echo "CC hooks updated: roadmap gate on Write/Edit"
+    echo "CC hooks updated: roadmap gate + ownership context"
   fi
 else
   mkdir -p "$REPO_ROOT/.claude"
   TMPFILE="$(mktemp)"
-  jq -n --arg cmd "$HOOK_COMMAND" '{
+  jq -n --arg gate "$GATE_CMD" --arg own "$OWNERSHIP_CMD" '{
     "hooks": {
       "PreToolUse": [
-        {"matcher": "Write", "hooks": [{"type": "command", "command": $cmd}]},
-        {"matcher": "Edit", "hooks": [{"type": "command", "command": $cmd}]}
+        {"matcher": "Write", "hooks": [{"type": "command", "command": $gate}]},
+        {"matcher": "Edit", "hooks": [{"type": "command", "command": $gate}]}
+      ],
+      "PostToolUse": [
+        {"matcher": "Bash", "hooks": [{"type": "command", "command": $own}]}
       ]
     }
   }' > "$TMPFILE"
   jq -e '.' "$TMPFILE" >/dev/null 2>&1 || { rm -f "$TMPFILE"; echo "ERROR: invalid JSON" >&2; exit 1; }
   mv "$TMPFILE" "$SETTINGS_FILE"
-  echo "CC hooks configured: roadmap gate on Write/Edit"
+  echo "CC hooks configured: roadmap gate + ownership context"
 fi
 
 echo ""
