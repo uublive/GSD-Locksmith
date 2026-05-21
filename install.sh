@@ -196,6 +196,35 @@ GISTEOF
   info "Config written: .claude/gsd-team.json"
 fi
 
+# ── Step 5b: Add team registry rule to CLAUDE.md ────────────
+header "Adding team registry rule to CLAUDE.md..."
+
+CLAUDE_MD="$TARGET/CLAUDE.md"
+TEAM_MARKER="## Team Registry"
+
+if [[ -f "$CLAUDE_MD" ]] && grep -q "$TEAM_MARKER" "$CLAUDE_MD"; then
+  info "CLAUDE.md already has team registry rule — skipped"
+else
+  cat >> "$CLAUDE_MD" <<'CLAUDEEOF'
+
+## Team Registry
+
+This project uses a shared GitHub Gist registry to coordinate milestone and phase numbers across the team. CC hooks automatically claim numbers before GSD commands execute.
+
+**IMPORTANT: When you see `[GSD TEAM]` in hook context or additionalContext:**
+1. ALWAYS announce the claim to the user before proceeding (e.g., "Milestone 2 claimed from team registry")
+2. Use the claimed number — do not pick a different one
+3. If a claim fails (hook exits with error), stop and show the error to the user
+
+**Registry commands available to the user:**
+- `./hooks/gsd-status.sh` — view all active claims
+- `./hooks/claim-number.sh milestone` — manually claim a milestone number
+- `./hooks/claim-number.sh phase <milestone_num>` — manually claim a phase number
+- `GSD_DRY_RUN=1` prefix — preview without writing
+CLAUDEEOF
+  info "CLAUDE.md updated with team registry rule"
+fi
+
 # ── Step 6: Run install-hooks.sh ─────────────────────────────
 header "Wiring hooks..."
 
