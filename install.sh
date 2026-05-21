@@ -106,13 +106,12 @@ fi
 # ── Step 4: Copy hook files ─────────────────────────────────
 header "Installing GSD team hooks..."
 
-DIRS_TO_COPY=(hooks .githooks scripts tests)
+DIRS_TO_COPY=(.gsd .githooks)
 FILES_TO_COPY=(README-HOOKS.md)
 
 for dir in "${DIRS_TO_COPY[@]}"; do
   if [[ -d "$SCRIPT_DIR/$dir" ]]; then
     if [[ -d "$TARGET/$dir" ]]; then
-      # Merge — copy files without deleting existing ones
       cp -rn "$SCRIPT_DIR/$dir/." "$TARGET/$dir/" 2>/dev/null || \
         rsync -a --ignore-existing "$SCRIPT_DIR/$dir/" "$TARGET/$dir/"
       info "$dir/ — merged (existing files preserved)"
@@ -134,9 +133,10 @@ for file in "${FILES_TO_COPY[@]}"; do
   fi
 done
 
-chmod 750 "$TARGET/hooks/"*.sh 2>/dev/null || true
+chmod 750 "$TARGET/.gsd/"*.sh 2>/dev/null || true
+chmod 644 "$TARGET/.gsd/lib/"*.sh 2>/dev/null || true
+chmod 750 "$TARGET/.gsd/tests/"*.sh 2>/dev/null || true
 chmod 750 "$TARGET/.githooks/"* 2>/dev/null || true
-chmod 750 "$TARGET/scripts/"*.sh 2>/dev/null || true
 
 # ── Step 5: Gist setup ──────────────────────────────────────
 header "Shared registry gist..."
@@ -211,16 +211,22 @@ else
 
 This project uses a shared GitHub Gist registry to coordinate milestone and phase numbers across the team. CC hooks automatically claim numbers before GSD commands execute.
 
-**IMPORTANT: When you see `[GSD TEAM]` in hook context or additionalContext:**
+**IMPORTANT: When you see [GSD TEAM] in hook context or additionalContext:**
 1. ALWAYS announce the claim to the user before proceeding (e.g., "Milestone 2 claimed from team registry")
 2. Use the claimed number — do not pick a different one
 3. If a claim fails (hook exits with error), stop and show the error to the user
 
 **Registry commands available to the user:**
-- `./hooks/gsd-status.sh` — view all active claims
-- `./hooks/claim-number.sh milestone` — manually claim a milestone number
-- `./hooks/claim-number.sh phase <milestone_num>` — manually claim a phase number
+- `./.gsd/gsd-status.sh` — view all active claims
+- `./.gsd/claim-number.sh milestone` — manually claim a milestone number
+- `./.gsd/claim-number.sh phase <milestone_num>` — manually claim a phase number
 - `GSD_DRY_RUN=1` prefix — preview without writing
+
+## Infrastructure Files (do not modify)
+
+The `.gsd/`, `.githooks/`, and `.claude/` directories contain GSD team coordination infrastructure.
+These are NOT part of this project's source code. Do not modify, review, plan, or include them in
+any code analysis, phase scope, or implementation task.
 CLAUDEEOF
   info "CLAUDE.md updated with team registry rule"
 fi
@@ -228,8 +234,8 @@ fi
 # ── Step 6: Run install-hooks.sh ─────────────────────────────
 header "Wiring hooks..."
 
-if [[ -f "$TARGET/scripts/install-hooks.sh" ]]; then
-  bash "$TARGET/scripts/install-hooks.sh"
+if [[ -f "$TARGET/.gsd/install-hooks.sh" ]]; then
+  bash "$TARGET/.gsd/install-hooks.sh"
 else
   warn "install-hooks.sh not found — configuring manually"
   git config core.hooksPath .githooks 2>/dev/null || true
@@ -284,7 +290,7 @@ echo "  Gist:     ${GIST_CHECK:-not set}"
 echo ""
 echo "  Quick test:"
 echo "    cd $TARGET"
-echo "    GSD_DRY_RUN=1 bash hooks/claim-number.sh milestone"
+echo "    GSD_DRY_RUN=1 bash .gsd/claim-number.sh milestone"
 echo ""
 echo "  Share the gist ID with your team — they run:"
 echo "    bash install.sh $TARGET"

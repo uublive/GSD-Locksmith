@@ -49,7 +49,7 @@ If `.claude/gsd-team.json` already exists in the repo (team lead committed it), 
 ### Step 3: Run the installer
 
 ```bash
-bash scripts/install-hooks.sh
+bash .gsd/install-hooks.sh
 ```
 
 Expected output:
@@ -57,7 +57,7 @@ Expected output:
 ```
 git hooks configured: core.hooksPath = .githooks
 CC hook configured in .claude/settings.json
-GSD hooks installed. Run: bash tests/test-validate.sh to verify validation.
+GSD hooks installed. Run: bash .gsd/tests/test-validate.sh to verify validation.
 ```
 
 The installer is idempotent — running it again is safe and will print `already configured` instead of re-writing.
@@ -76,11 +76,11 @@ cat .claude/settings.json | jq '.hooks.PreToolUse'
 # Expected: JSON array showing the cc-pretool-claim.sh entry
 
 # 3. Planning file validation suite
-bash tests/test-validate.sh
+bash .gsd/tests/test-validate.sh
 # Expected: 8 passed, 0 failed
 
 # 4. Dry-run number claim (no gist write)
-GSD_DRY_RUN=1 bash hooks/claim-number.sh milestone
+GSD_DRY_RUN=1 bash .gsd/claim-number.sh milestone
 # Expected: [DRY RUN] Would claim: type=milestone ...
 ```
 
@@ -90,7 +90,7 @@ Once installed, the following workflows are automated:
 
 ### CC hooks — number claiming
 
-When you run `/gsd-new-milestone` or `/gsd-new-phase` in a Claude Code session, the `hooks/cc-pretool-claim.sh` hook fires automatically before the GSD command executes. It:
+When you run `/gsd-new-milestone` or `/gsd-new-phase` in a Claude Code session, the `.gsd/cc-pretool-claim.sh` hook fires automatically before the GSD command executes. It:
 
 1. Reads the shared Gist registry to find the next available number
 2. Claims that number with your branch name and GitHub username
@@ -119,7 +119,7 @@ The `gh` CLI is installed but not authenticated.
 gh auth login
 ```
 
-Follow the prompts to authenticate with GitHub. Re-run `bash scripts/install-hooks.sh` after.
+Follow the prompts to authenticate with GitHub. Re-run `bash .gsd/install-hooks.sh` after.
 
 ### "ERROR: .claude/gsd-team.json not found"
 
@@ -142,5 +142,5 @@ git config core.hooksPath .githooks
 Or re-run the installer:
 
 ```bash
-bash scripts/install-hooks.sh
+bash .gsd/install-hooks.sh
 ```

@@ -17,10 +17,10 @@
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-# shellcheck source=hooks/lib/common.sh
-source "$REPO_ROOT/hooks/lib/common.sh"
-# shellcheck source=hooks/lib/gist.sh
-source "$REPO_ROOT/hooks/lib/gist.sh"
+# shellcheck source=.gsd/lib/common.sh
+source "$REPO_ROOT/.gsd/lib/common.sh"
+# shellcheck source=.gsd/lib/gist.sh
+source "$REPO_ROOT/.gsd/lib/gist.sh"
 
 # --- Prerequisite checks (non-blocking: wrap with || exit 0) ---
 check_deps || {

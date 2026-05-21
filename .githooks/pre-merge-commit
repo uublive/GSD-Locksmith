@@ -16,8 +16,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-# shellcheck source=hooks/lib/validate.sh
-source "$REPO_ROOT/hooks/lib/validate.sh"
+# shellcheck source=.gsd/lib/validate.sh
+source "$REPO_ROOT/.gsd/lib/validate.sh"
 
 # D-08: Only validate merges to development/develop.
 # git rev-parse --abbrev-ref HEAD returns the merge TARGET branch (the
