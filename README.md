@@ -1,4 +1,4 @@
-# GSD Team Sync
+# GSD Locksmith
 
 Automatic milestone and phase number coordination for teams using [GSD (Get Shit Done)](https://github.com/labtroniq/get-shit-done-cc) with Claude Code. Prevents number collisions when multiple developers create milestones and phases in parallel — no Slack coordination needed.
 
@@ -57,10 +57,10 @@ Developer writes ROADMAP.md
 
 ```bash
 # Clone this repo somewhere
-git clone https://github.com/YOUR_USER/gsd-team-sync.git
+git clone https://github.com/YOUR_USER/gsd-locksmith.git
 
 # Run the installer, pointing at your project
-bash gsd-team-sync/install.sh /path/to/your-project
+bash gsd-locksmith/install.sh /path/to/your-project
 ```
 
 The installer will:
@@ -94,8 +94,8 @@ Copy the gist ID from the output URL.
 #### 2. Copy files into your project
 
 ```bash
-cp -r gsd-team-sync/.gsd /path/to/your-project/
-cp -r gsd-team-sync/.githooks /path/to/your-project/
+cp -r gsd-locksmith/.gsd /path/to/your-project/
+cp -r gsd-locksmith/.githooks /path/to/your-project/
 ```
 
 #### 3. Configure the gist ID

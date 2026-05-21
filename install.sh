@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh — One-shot installer for GSD Team Coordination Plugins
+# install.sh — One-shot installer for GSD Locksmith
 #
 # Usage:
 #   bash install.sh                    # interactive — asks for path
@@ -104,7 +104,7 @@ if [[ ! -d .git ]]; then
 fi
 
 # ── Step 4: Copy hook files ─────────────────────────────────
-header "Installing GSD team hooks..."
+header "Installing GSD Locksmith..."
 
 DIRS_TO_COPY=(.gsd .githooks)
 FILES_TO_COPY=(README-HOOKS.md)
@@ -196,23 +196,23 @@ GISTEOF
   info "Config written: .claude/gsd-team.json"
 fi
 
-# ── Step 5b: Add team registry rule to CLAUDE.md ────────────
-header "Adding team registry rule to CLAUDE.md..."
+# ── Step 5b: Add locksmith rule to CLAUDE.md ────────────
+header "Adding locksmith rule to CLAUDE.md..."
 
 CLAUDE_MD="$TARGET/CLAUDE.md"
-TEAM_MARKER="## Team Registry"
+TEAM_MARKER="## GSD Locksmith"
 
 if [[ -f "$CLAUDE_MD" ]] && grep -q "$TEAM_MARKER" "$CLAUDE_MD"; then
-  info "CLAUDE.md already has team registry rule — skipped"
+  info "CLAUDE.md already has locksmith rule — skipped"
 else
   cat >> "$CLAUDE_MD" <<'CLAUDEEOF'
 
-## Team Registry
+## GSD Locksmith
 
 This project uses a shared GitHub Gist registry to coordinate milestone and phase numbers across the team. CC hooks automatically claim numbers before GSD commands execute.
 
 **IMPORTANT: When you see [GSD TEAM] in hook context or additionalContext:**
-1. ALWAYS announce the claim to the user before proceeding (e.g., "Milestone 2 claimed from team registry")
+1. ALWAYS announce the claim to the user before proceeding (e.g., "Milestone 2 claimed from locksmith")
 2. Use the claimed number — do not pick a different one
 3. If a claim fails (hook exits with error), stop and show the error to the user
 
@@ -224,11 +224,11 @@ This project uses a shared GitHub Gist registry to coordinate milestone and phas
 
 ## Infrastructure Files (do not modify)
 
-The `.gsd/`, `.githooks/`, and `.claude/` directories contain GSD team coordination infrastructure.
+The `.gsd/`, `.githooks/`, and `.claude/` directories contain GSD Locksmith infrastructure.
 These are NOT part of this project's source code. Do not modify, review, plan, or include them in
 any code analysis, phase scope, or implementation task.
 CLAUDEEOF
-  info "CLAUDE.md updated with team registry rule"
+  info "CLAUDE.md updated with locksmith rule"
 fi
 
 # ── Step 6: Run install-hooks.sh ─────────────────────────────

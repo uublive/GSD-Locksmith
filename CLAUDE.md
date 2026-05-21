@@ -1,7 +1,7 @@
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
 
-**GSD Team Coordination Plugins**
+**GSD Locksmith**
 
 A set of shell-based plugins for GSD (Get Shit Done) that enable a 3-person dev team to work in parallel without breaking each other's planning artifacts. The plugins use Claude Code hooks, git hooks, and a shared GitHub Gist registry to automate milestone/phase number allocation and validate planning file integrity on merge.
 
