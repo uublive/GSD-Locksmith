@@ -81,6 +81,15 @@ if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-project'; then
   # claim_and_inject exits; unreachable
 fi
 
+# ── Plan phase (/gsd-plan-phase N) ───────────────────────────
+if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.plan-phase'; then
+  CURRENT_MILESTONE=$(grep -iE '^\*?\*?milestone' "$REPO_ROOT/.planning/STATE.md" 2>/dev/null | grep -oE '[0-9]+' | head -1 || true)
+  if [[ -n "$CURRENT_MILESTONE" ]]; then
+    claim_and_inject "phase $CURRENT_MILESTONE" \
+      "[GSD TEAM] Phase %s claimed from shared registry for milestone $CURRENT_MILESTONE. You MUST tell the user: 'Phase %s claimed from team registry — no conflicts with other developers.' Then use phase number %s for this command."
+  fi
+fi
+
 # ── Phase insert (/gsd-phase --insert N) ─────────────────────
 if echo "$COMMAND" | grep -qE 'gsd-phase\s+--insert|gsd-sdk query roadmap\.insert-phase'; then
   # Extract the milestone number from STATE.md (handles both "Milestone: 1" and "milestone: v1.0")
