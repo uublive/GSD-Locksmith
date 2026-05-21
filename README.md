@@ -20,6 +20,7 @@ A `gsd-registry` orphan branch in the same repo acts as a lightweight number reg
 
 - **Claim numbers** when anyone writes to `ROADMAP.md` (via a PreToolUse gate on Write/Edit)
 - **Block conflicts** if a number is already claimed by another developer
+- **Show ownership** after GSD queries, so Claude knows who owns what and doesn't suggest working on another dev's milestones
 - **Validate integrity** when merging to development (phase gaps, duplicate IDs, stale references)
 - **Release claims** after branches are merged
 
@@ -120,6 +121,7 @@ Teammates pull and run `bash .gsd/install-hooks.sh` — one command, done.
 ```
 .gsd/                          # Hidden from Claude's project analysis
   roadmap-gate.sh              # PreToolUse hook — claims/blocks on ROADMAP.md writes
+  ownership-context.sh         # PostToolUse hook — injects team ownership after GSD queries
   claim-number.sh              # Manual number claiming CLI
   gsd-status.sh                # View active claims
   install-hooks.sh             # Per-developer setup
@@ -133,7 +135,7 @@ Teammates pull and run `bash .gsd/install-hooks.sh` — one command, done.
   post-merge                   # Releases claims after merge
 
 .claude/
-  settings.json                # CC hook wiring (Write/Edit → roadmap-gate)
+  settings.json                # CC hook wiring (PreToolUse + PostToolUse)
   gsd-team.json                # Registry config (branch name, project)
 ```
 
@@ -148,6 +150,18 @@ When any GSD command writes or edits `ROADMAP.md`, the roadmap gate hook fires *
 - **Blocks** if a number is claimed by another developer (suggests the next free number)
 - **Claims** unclaimed numbers and allows the write
 - Injects context so Claude announces the claim to the user
+
+### Ownership-Aware Routing
+
+After Claude runs GSD queries (`gsd-sdk query roadmap` or `gsd-sdk query init`), a PostToolUse hook reads the registry and injects an ownership summary into Claude's context:
+
+```
+## Team Registry: Ownership Context
+- Milestone 1.11, phases 37, 38: alex (branch: feat/payments)
+- Milestone 1.15, phases 52, 53: matteo (branch: feat/dashboard) ← you
+```
+
+Claude then knows who owns which milestones/phases and adjusts routing suggestions accordingly — it won't suggest you work on Alex's milestones unless you explicitly ask. This is **enrichment, not filtering** — all claims are visible, and you can always choose to pick up someone else's work.
 
 ### Merge-Time Validation
 
