@@ -48,7 +48,7 @@ claim_and_inject() {
   fi
 
   local msg
-  msg=$(printf "$context_msg" "$num" "$num")
+  msg=$(echo "$context_msg" | sed "s/%s/$num/g")
 
   jq -n --arg ctx "$msg" '{"additionalContext": $ctx}'
   exit 0
@@ -56,14 +56,14 @@ claim_and_inject() {
 
 if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-milestone|gsd-new-milestone'; then
   claim_and_inject "milestone" "milestone" \
-    "TEAM REGISTRY: Milestone %s claimed (and phase 1). Use milestone number %s for this command."
+    "[GSD TEAM] Milestone %s claimed from shared registry (and phase 1 auto-claimed). You MUST tell the user: 'Milestone %s claimed from team registry — no conflicts with other developers.' Then use milestone number %s for this command."
 fi
 
 if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.plan-phase'; then
   milestone_num=$(echo "$COMMAND" | grep -oE '[0-9]+' | head -1 || true)
   if [[ -n "$milestone_num" ]]; then
     claim_and_inject "phase" "phase $milestone_num" \
-      "TEAM REGISTRY: Phase %s claimed for current milestone. Use phase number %s for this command."
+      "[GSD TEAM] Phase %s claimed from shared registry for the current milestone. You MUST tell the user: 'Phase %s claimed from team registry — no conflicts with other developers.' Then use phase number %s for this command."
   fi
 fi
 
