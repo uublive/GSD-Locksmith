@@ -1,6 +1,8 @@
 # GSD Locksmith
 
-Automatic milestone and phase number coordination for teams using [GSD (Get Shit Done)](https://github.com/labtroniq/get-shit-done-cc) with Claude Code. Prevents number collisions when multiple developers create milestones and phases in parallel — no Slack coordination needed.
+Team coordination plugin for [GSD (Get Shit Done)](https://github.com/gsd-build/get-shit-done) — the AI-powered planning and execution framework for Claude Code.
+
+When multiple developers use GSD on the same project, milestone and phase numbers collide. Locksmith prevents that: a shared GitHub Gist registry automatically claims numbers before they're written to `ROADMAP.md`, blocks conflicts from other developers, and validates planning file integrity at merge time. No Slack coordination needed.
 
 ## The Problem
 
@@ -57,7 +59,7 @@ Developer writes ROADMAP.md
 
 ```bash
 # Clone this repo somewhere
-git clone https://github.com/YOUR_USER/gsd-locksmith.git
+git clone https://github.com/uublive/gsd-locksmith.git
 
 # Run the installer, pointing at your project
 bash gsd-locksmith/install.sh /path/to/your-project
