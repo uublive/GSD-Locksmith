@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Strip Co-Authored-By trailers added by Claude Code
+sed -i.bak 's/\\n\\nCo-Authored-By:.*//; /^Co-Authored-By:/d' "$1"
+rm -f "$1.bak"
