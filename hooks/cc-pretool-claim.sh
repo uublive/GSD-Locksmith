@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 # hooks/cc-pretool-claim.sh — PreToolUse hook for Bash tool
 #
-# Intercepts gsd-sdk init calls for new-milestone and plan-phase workflows.
-# Claims the next number from the shared gist registry and injects it as
+# Intercepts gsd-sdk init calls that create milestone or phase numbers.
+# Claims the next number from the shared gist registry and injects
 # additionalContext so Claude uses the team-coordinated number.
+#
+# Covered commands:
+#   - init.new-milestone  → claim milestone N + phase 1
+#   - init.new-project    → claim milestone 1 + phase 1
+#   - gsd-phase --insert  → claim the inserted phase number
 #
 # Fast path: non-GSD bash commands exit 0 immediately (~5ms overhead).
 
@@ -22,10 +27,18 @@ if [[ -z "$REPO_ROOT" ]]; then
   exit 0
 fi
 
+# Check if hooks are installed (gsd-team.json exists with a real gist ID)
+if [[ ! -f "$REPO_ROOT/.claude/gsd-team.json" ]]; then
+  exit 0
+fi
+GIST_ID=$(jq -r '.gist_id // ""' "$REPO_ROOT/.claude/gsd-team.json" 2>/dev/null || true)
+if [[ -z "$GIST_ID" || "$GIST_ID" == "null" || "$GIST_ID" == "REPLACE_WITH_YOUR_GIST_ID" ]]; then
+  exit 0
+fi
+
 claim_and_inject() {
-  local claim_type="$1"
-  local claim_args="$2"
-  local context_msg="$3"
+  local claim_args="$1"
+  local context_msg="$2"
 
   local err_file
   err_file="$(mktemp)"
@@ -54,16 +67,27 @@ claim_and_inject() {
   exit 0
 }
 
-if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-milestone|gsd-new-milestone'; then
-  claim_and_inject "milestone" "milestone" \
+# ── New milestone (/gsd-new-milestone) ───────────────────────
+if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-milestone'; then
+  claim_and_inject "milestone" \
     "[GSD TEAM] Milestone %s claimed from shared registry (and phase 1 auto-claimed). You MUST tell the user: 'Milestone %s claimed from team registry — no conflicts with other developers.' Then use milestone number %s for this command."
+  # claim_and_inject exits; unreachable
 fi
 
-if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.plan-phase'; then
-  milestone_num=$(echo "$COMMAND" | grep -oE '[0-9]+' | head -1 || true)
-  if [[ -n "$milestone_num" ]]; then
-    claim_and_inject "phase" "phase $milestone_num" \
-      "[GSD TEAM] Phase %s claimed from shared registry for the current milestone. You MUST tell the user: 'Phase %s claimed from team registry — no conflicts with other developers.' Then use phase number %s for this command."
+# ── New project (/gsd-new-project) ───────────────────────────
+if echo "$COMMAND" | grep -qE 'gsd-sdk query init\.new-project'; then
+  claim_and_inject "milestone" \
+    "[GSD TEAM] Project initialized — milestone 1 and phase 1 claimed from shared registry. You MUST tell the user: 'Milestone %s claimed from team registry — your project numbers are reserved.' Then use milestone number %s."
+  # claim_and_inject exits; unreachable
+fi
+
+# ── Phase insert (/gsd-phase --insert N) ─────────────────────
+if echo "$COMMAND" | grep -qE 'gsd-phase\s+--insert|gsd-sdk query roadmap\.insert-phase'; then
+  # Extract the milestone number from STATE.md (handles both "Milestone: 1" and "milestone: v1.0")
+  CURRENT_MILESTONE=$(grep -iE '^\*?\*?milestone' "$REPO_ROOT/.planning/STATE.md" 2>/dev/null | grep -oE '[0-9]+' | head -1 || true)
+  if [[ -n "$CURRENT_MILESTONE" ]]; then
+    claim_and_inject "phase $CURRENT_MILESTONE" \
+      "[GSD TEAM] Phase %s claimed from shared registry for milestone $CURRENT_MILESTONE. You MUST tell the user: 'Phase %s claimed from team registry — no conflicts with other developers.' Then use phase number %s for the inserted phase."
   fi
 fi
 
