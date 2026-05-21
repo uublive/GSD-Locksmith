@@ -95,7 +95,7 @@ MS_CLAIM=$(echo "$REGISTRY" | jq --arg m "$MILESTONE" \
 if [[ -n "$MS_CLAIM" ]]; then
   MS_OWNER=$(echo "$MS_CLAIM" | jq -r '.owner' 2>/dev/null || true)
   MS_BRANCH=$(echo "$MS_CLAIM" | jq -r '.branch' 2>/dev/null || true)
-  if [[ "$MS_OWNER" != "$MY_USER" || "$MS_BRANCH" != "$MY_BRANCH" ]]; then
+  if [[ "$MS_OWNER" != "$MY_USER" ]]; then
     CONFLICTS="Milestone $MILESTONE is claimed by @$MS_OWNER on branch $MS_BRANCH"
   fi
 else
@@ -110,7 +110,7 @@ for phase_num in $PHASE_NUMBERS; do
   if [[ -n "$PH_CLAIM" ]]; then
     PH_OWNER=$(echo "$PH_CLAIM" | jq -r '.owner' 2>/dev/null || true)
     PH_BRANCH=$(echo "$PH_CLAIM" | jq -r '.branch' 2>/dev/null || true)
-    if [[ "$PH_OWNER" != "$MY_USER" || "$PH_BRANCH" != "$MY_BRANCH" ]]; then
+    if [[ "$PH_OWNER" != "$MY_USER" ]]; then
       CONFLICTS="${CONFLICTS:+$CONFLICTS; }Phase $phase_num (milestone $MILESTONE) is claimed by @$PH_OWNER on branch $PH_BRANCH"
     fi
   else
