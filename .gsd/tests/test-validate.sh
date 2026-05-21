@@ -88,7 +88,7 @@ FIXTURE_GAP_BAD=$(cat <<'EOF'
 
 ## Phases
 
-- [x] **Phase 1: Registry Core** - Allocation via Gist
+- [x] **Phase 1: Registry Core** - Registry Core
 - [x] **Phase 2: Claude Code Hooks** - Command interception
 - [ ] **Phase 4: Setup and Distribution** - Packaging
 EOF
@@ -100,7 +100,7 @@ FIXTURE_GAP_GOOD=$(cat <<'EOF'
 
 ## Phases
 
-- [x] **Phase 1: Registry Core** - Allocation via Gist
+- [x] **Phase 1: Registry Core** - Registry Core
 - [x] **Phase 2: Claude Code Hooks** - Command interception
 - [ ] **Phase 3: Git Merge Validation** - Pre-merge checks
 - [ ] **Phase 4: Setup and Distribution** - Packaging

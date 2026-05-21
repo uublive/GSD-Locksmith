@@ -22,12 +22,12 @@ load_config() {
   repo_root="$(git rev-parse --show-toplevel)"
   local config_file="$repo_root/.claude/gsd-team.json"
   [[ -f "$config_file" ]] || {
-    echo "ERROR: .claude/gsd-team.json not found. Create it with your gist_id." >&2
+    echo "ERROR: .claude/gsd-team.json not found. Run install.sh to set up." >&2
     exit 1
   }
-  GIST_ID="$(jq -r '.gist_id' "$config_file")"
-  [[ "$GIST_ID" != "null" && -n "$GIST_ID" ]] || {
-    echo "ERROR: gist_id not set in .claude/gsd-team.json" >&2
+  REGISTRY_BRANCH="$(jq -r '.registry_branch // "gsd-registry"' "$config_file")"
+  REGISTRY_REPO="$(gh repo view --json nameWithOwner -q '.nameWithOwner' 2>/dev/null)" || {
+    echo "ERROR: Could not determine GitHub repository. Ensure a GitHub remote is configured." >&2
     exit 1
   }
 }

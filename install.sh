@@ -9,7 +9,7 @@
 #   1. Validates prerequisites (jq, gh, gh auth)
 #   2. Creates target directory if needed, inits git if needed
 #   3. Copies hooks/, .githooks/, scripts/, tests/, README-HOOKS.md
-#   4. Sets up shared gist (create new or reuse existing)
+#   4. Sets up shared registry branch (create new or reuse existing)
 #   5. Runs install-hooks.sh to wire git + CC hooks
 #
 # Safe for existing projects — never overwrites non-hook files.
@@ -138,63 +138,46 @@ chmod 644 "$TARGET/.gsd/lib/"*.sh 2>/dev/null || true
 chmod 750 "$TARGET/.gsd/tests/"*.sh 2>/dev/null || true
 chmod 750 "$TARGET/.githooks/"* 2>/dev/null || true
 
-# ── Step 5: Gist setup ──────────────────────────────────────
-header "Shared registry gist..."
+# ── Step 5: Registry branch setup ──────────────────────────
+header "Shared registry branch..."
 
 mkdir -p "$TARGET/.claude"
 
-if [[ -f "$TARGET/.claude/gsd-team.json" ]]; then
-  EXISTING_ID=$(jq -r '.gist_id // ""' "$TARGET/.claude/gsd-team.json" 2>/dev/null)
-  if [[ -n "$EXISTING_ID" && "$EXISTING_ID" != "REPLACE_WITH_YOUR_GIST_ID" && "$EXISTING_ID" != "null" ]]; then
-    info "Gist already configured: $EXISTING_ID"
-  else
-    warn "gsd-team.json exists but gist_id is not set."
-    EXISTING_ID=""
-  fi
+REGISTRY_BRANCH="gsd-registry"
+REPO_NWO="$(gh repo view --json nameWithOwner -q '.nameWithOwner' 2>/dev/null)" || {
+  error "Could not determine GitHub repository. Ensure a GitHub remote is configured."
+  error "Run: git remote add origin <your-repo-url>"
+  exit 1
+}
+
+BRANCH_EXISTS=0
+gh api "/repos/$REPO_NWO/git/refs/heads/$REGISTRY_BRANCH" &>/dev/null && BRANCH_EXISTS=1
+
+if [[ "$BRANCH_EXISTS" -eq 1 ]]; then
+  info "Registry branch '$REGISTRY_BRANCH' already exists on $REPO_NWO"
 else
-  EXISTING_ID=""
+  echo "Creating orphan branch '$REGISTRY_BRANCH' on $REPO_NWO..."
+
+  BLOB_SHA=$(jq -n '{"content":"{\"version\":1,\"claims\":[]}","encoding":"utf-8"}' | \
+    gh api "/repos/$REPO_NWO/git/blobs" --method POST --input - --jq '.sha')
+
+  TREE_SHA=$(jq -n --arg sha "$BLOB_SHA" '{tree:[{path:"registry.json",mode:"100644",type:"blob",sha:$sha}]}' | \
+    gh api "/repos/$REPO_NWO/git/trees" --method POST --input - --jq '.sha')
+
+  COMMIT_SHA=$(jq -n --arg tree "$TREE_SHA" '{message:"init: gsd-registry",tree:$tree,parents:[]}' | \
+    gh api "/repos/$REPO_NWO/git/commits" --method POST --input - --jq '.sha')
+
+  gh api "/repos/$REPO_NWO/git/refs" --method POST --input - > /dev/null <<REFEOF
+{"ref":"refs/heads/$REGISTRY_BRANCH","sha":"$COMMIT_SHA"}
+REFEOF
+
+  info "Registry branch created on $REPO_NWO"
 fi
 
-if [[ -z "$EXISTING_ID" ]]; then
-  echo ""
-  echo "The team needs a shared GitHub Gist to store number claims."
-  echo ""
-  echo "  1) Create a new gist (first person setting up)"
-  echo "  2) Enter an existing gist ID (teammate already created it)"
-  echo ""
-  echo -n "Choice [1/2]: "
-  read -r GIST_CHOICE
-
-  if [[ "${GIST_CHOICE:-1}" == "1" ]]; then
-    echo "Creating shared gist..."
-    GIST_URL=$(gh gist create --public --filename registry.json - <<'GISTEOF'
-{"version":1,"claims":[]}
-GISTEOF
-    )
-    GIST_ID=$(echo "$GIST_URL" | grep -oE '[a-f0-9]{20,}' | tail -1)
-    if [[ -z "$GIST_ID" ]]; then
-      error "Failed to extract gist ID from: $GIST_URL"
-      echo "Create a gist manually at https://gist.github.com with a file named registry.json"
-      echo "containing: {\"version\":1,\"claims\":[]}"
-      echo -n "Then enter the gist ID: "
-      read -r GIST_ID
-    else
-      info "Gist created: $GIST_URL"
-    fi
-  else
-    echo -n "Enter the gist ID: "
-    read -r GIST_ID
-  fi
-
-  if [[ -z "$GIST_ID" ]]; then
-    error "No gist ID provided. You can set it later in .claude/gsd-team.json"
-    GIST_ID="REPLACE_WITH_YOUR_GIST_ID"
-  fi
-
-  PROJECT_NAME=$(basename "$TARGET")
-  echo "{\"gist_id\":\"$GIST_ID\",\"project\":\"$PROJECT_NAME\"}" | jq '.' > "$TARGET/.claude/gsd-team.json"
-  info "Config written: .claude/gsd-team.json"
-fi
+PROJECT_NAME=$(basename "$TARGET")
+jq -n --arg b "$REGISTRY_BRANCH" --arg p "$PROJECT_NAME" \
+  '{registry_branch:$b,project:$p}' > "$TARGET/.claude/gsd-team.json"
+info "Config written: .claude/gsd-team.json"
 
 # ── Step 5b: Add locksmith rule to CLAUDE.md ────────────
 header "Adding locksmith rule to CLAUDE.md..."
@@ -209,7 +192,7 @@ else
 
 ## GSD Locksmith
 
-This project uses a shared GitHub Gist registry to coordinate milestone and phase numbers across the team. CC hooks automatically claim numbers before GSD commands execute.
+This project uses a shared registry (on the `gsd-registry` orphan branch) to coordinate milestone and phase numbers across the team. CC hooks automatically claim numbers before GSD commands execute.
 
 **IMPORTANT: When you see [GSD TEAM] in hook context or additionalContext:**
 1. ALWAYS announce the claim to the user before proceeding (e.g., "Milestone 2 claimed from locksmith")
@@ -260,11 +243,11 @@ else
   warn "CC hooks: settings.json not configured (run install-hooks.sh manually)"
 fi
 
-GIST_CHECK=$(jq -r '.gist_id' "$TARGET/.claude/gsd-team.json" 2>/dev/null)
-if [[ -n "$GIST_CHECK" && "$GIST_CHECK" != "REPLACE_WITH_YOUR_GIST_ID" && "$GIST_CHECK" != "null" ]]; then
-  info "Registry gist: $GIST_CHECK"
+REG_CHECK=$(jq -r '.registry_branch' "$TARGET/.claude/gsd-team.json" 2>/dev/null)
+if [[ -n "$REG_CHECK" && "$REG_CHECK" != "null" ]]; then
+  info "Registry branch: $REG_CHECK on $REPO_NWO"
 else
-  warn "Registry gist: not configured yet"
+  warn "Registry branch: not configured yet"
   ERRORS=$((ERRORS + 1))
 fi
 
@@ -285,14 +268,14 @@ else
 fi
 
 echo ""
-echo "  Project:  $TARGET"
-echo "  Gist:     ${GIST_CHECK:-not set}"
+echo "  Project:   $TARGET"
+echo "  Registry:  $REGISTRY_BRANCH branch on $REPO_NWO"
 echo ""
 echo "  Quick test:"
 echo "    cd $TARGET"
 echo "    GSD_DRY_RUN=1 bash .gsd/claim-number.sh milestone"
 echo ""
-echo "  Share the gist ID with your team — they run:"
+echo "  Teammates just clone and run:"
 echo "    bash install.sh $TARGET"
-echo "    (choose option 2 and enter the same gist ID)"
+echo "    (registry branch is auto-detected — no config to share)"
 echo ""

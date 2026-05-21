@@ -5,7 +5,7 @@
 #   1. git config core.hooksPath .githooks
 #   2. CC hooks in .claude/settings.json (PreToolUse on Write/Edit for ROADMAP gate)
 #
-# Prerequisites: jq, git, .claude/gsd-team.json with gist_id set
+# Prerequisites: jq, git, gh, .claude/gsd-team.json
 # Usage: bash .gsd/install-hooks.sh
 # Safe to run multiple times — idempotent.
 
@@ -27,9 +27,9 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   exit 1
 fi
 
-GIST_ID="$(jq -r '.gist_id // empty' "$CONFIG_FILE")"
-if [[ -z "$GIST_ID" || "$GIST_ID" == "null" ]]; then
-  echo "ERROR: gist_id is missing in .claude/gsd-team.json." >&2
+REGISTRY_BRANCH="$(jq -r '.registry_branch // "gsd-registry"' "$CONFIG_FILE")"
+if [[ -z "$REGISTRY_BRANCH" || "$REGISTRY_BRANCH" == "null" ]]; then
+  echo "ERROR: registry_branch is missing in .claude/gsd-team.json." >&2
   exit 1
 fi
 

@@ -5,14 +5,14 @@
 #   ./.gsd/claim-number.sh phase <milestone_num>
 #
 # Environment:
-#   GSD_DRY_RUN=1    Preview the claim without writing to the gist
+#   GSD_DRY_RUN=1    Preview the claim without writing to the registry
 #   GSD_VERBOSE=1    Emit verbose operation logs to stderr
 
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/gist.sh"
+source "$REPO_ROOT/.gsd/lib/registry.sh"
 
 check_deps
 load_config
@@ -53,7 +53,7 @@ branch="$(git branch --show-current)"
 claimed_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 # --- Read registry ---
-# In dry-run mode, a missing/invalid gist is acceptable — we use a stub registry
+# In dry-run mode, a missing/invalid registry is acceptable — we use a stub
 REGISTRY=""
 if [[ -n "${GSD_DRY_RUN:-}" ]]; then
   REGISTRY="$(read_registry 2>/dev/null)" || REGISTRY='{"version":1,"claims":[]}'
@@ -112,14 +112,14 @@ if [[ -n "${GSD_DRY_RUN:-}" ]]; then
   else
     echo "[DRY RUN] Would claim: type=phase number=$NEXT_NUM milestone=$MILESTONE_NUM owner=$owner branch=$branch" >&2
   fi
-  echo "[DRY RUN] No gist write performed." >&2
+  echo "[DRY RUN] No registry write performed." >&2
   exit 0
 fi
 
 # --- Write registry (first attempt) ---
-verbose_log "Writing registry to gist (first attempt)"
+verbose_log "Writing registry (first attempt)"
 if ! write_registry "$UPDATED_REGISTRY"; then
-  echo "ERROR: gist write failed" >&2
+  echo "ERROR: registry write failed" >&2
   exit 2
 fi
 
@@ -178,9 +178,9 @@ else
       ]')"
   fi
 
-  verbose_log "Writing registry to gist (retry after collision)"
+  verbose_log "Writing registry (retry after collision)"
   if ! write_registry "$UPDATED_REGISTRY"; then
-    echo "ERROR: gist write failed on retry" >&2
+    echo "ERROR: registry write failed on retry" >&2
     exit 2
   fi
 

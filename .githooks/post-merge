@@ -2,7 +2,7 @@
 # .githooks/post-merge
 #
 # Phase:    04-setup-release-lifecycle
-# Purpose:  Mark claims for the merged branch as "released" in the gist registry.
+# Purpose:  Mark claims for the merged branch as "released" in the registry.
 #           Keeps the registry clean after PRs land — no manual cleanup required.
 #
 # Limitation: This hook fires after successful merges (including fast-forward) but
@@ -19,8 +19,8 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 # shellcheck source=.gsd/lib/common.sh
 source "$REPO_ROOT/.gsd/lib/common.sh"
-# shellcheck source=.gsd/lib/gist.sh
-source "$REPO_ROOT/.gsd/lib/gist.sh"
+# shellcheck source=.gsd/lib/registry.sh
+source "$REPO_ROOT/.gsd/lib/registry.sh"
 
 # --- Prerequisite checks (non-blocking: wrap with || exit 0) ---
 check_deps || {

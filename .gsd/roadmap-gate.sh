@@ -3,11 +3,11 @@
 #
 # Fires before any Write or Edit to files matching ROADMAP.md.
 # Extracts milestone/phase numbers from the content, checks the shared
-# gist registry for conflicts, and either:
+# registry for conflicts, and either:
 #   - BLOCKS the write (exit 2) if a number is already claimed by someone else
 #   - CLAIMS unclaimed numbers and allows the write (exit 0)
 #
-# This replaces the fragile Bash command interception approach.
+# Registry stored on the gsd-registry orphan branch in the same repo.
 
 set -euo pipefail
 
@@ -39,13 +39,8 @@ if [[ ! -f "$REPO_ROOT/.claude/gsd-team.json" ]]; then
   exit 0
 fi
 
-GIST_ID=$(jq -r '.gist_id // ""' "$REPO_ROOT/.claude/gsd-team.json" 2>/dev/null || true)
-if [[ -z "$GIST_ID" || "$GIST_ID" == "null" || "$GIST_ID" == "REPLACE_WITH_YOUR_GIST_ID" ]]; then
-  exit 0
-fi
-
 source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/gist.sh"
+source "$REPO_ROOT/.gsd/lib/registry.sh"
 
 load_config 2>/dev/null || exit 0
 

@@ -2,7 +2,7 @@
 
 Team coordination plugin for [GSD (Get Shit Done)](https://github.com/gsd-build/get-shit-done) — the AI-powered planning and execution framework for Claude Code.
 
-When multiple developers use GSD on the same project, milestone and phase numbers collide. Locksmith prevents that: a shared GitHub Gist registry automatically claims numbers before they're written to `ROADMAP.md`, blocks conflicts from other developers, and validates planning file integrity at merge time. No Slack coordination needed.
+When multiple developers use GSD on the same project, milestone and phase numbers collide. Locksmith prevents that: a shared registry (stored on an orphan branch in the same repo) automatically claims numbers before they're written to `ROADMAP.md`, blocks conflicts from other developers, and validates planning file integrity at merge time. No Slack coordination needed.
 
 ## The Problem
 
@@ -16,7 +16,7 @@ The same happens with phase numbers, phase inserts, and any roadmap changes.
 
 ## The Solution
 
-A shared GitHub Gist acts as a lightweight number registry. Claude Code hooks automatically:
+A `gsd-registry` orphan branch in the same repo acts as a lightweight number registry. Claude Code hooks automatically:
 
 - **Claim numbers** when anyone writes to `ROADMAP.md` (via a PreToolUse gate on Write/Edit)
 - **Block conflicts** if a number is already claimed by another developer
@@ -38,8 +38,8 @@ Developer writes ROADMAP.md
          │
          ▼
 ┌─────────────────────┐     ┌──────────────────┐
-│  Check gist registry │────▶│  GitHub Gist     │
-│  for conflicts       │◀────│  registry.json   │
+│  Check registry      │────▶│  gsd-registry    │
+│  for conflicts       │◀────│  (orphan branch) │
 └────────┬────────────┘     └──────────────────┘
          │
     ┌────┴────┐
@@ -68,7 +68,7 @@ bash gsd-locksmith/install.sh /path/to/your-project
 The installer will:
 1. Check prerequisites (`jq`, `gh`, `gh auth`)
 2. Copy `.gsd/`, `.githooks/` into your project
-3. Create or reuse a shared GitHub Gist
+3. Create the `gsd-registry` orphan branch (or detect it already exists)
 4. Configure git hooks and Claude Code hooks
 5. Add team registry rules to your `CLAUDE.md`
 6. Verify the setup
@@ -80,34 +80,26 @@ The installer will:
 | Tool | Install | Purpose |
 |------|---------|---------|
 | `jq` | `brew install jq` | JSON processing |
-| `gh` CLI | `brew install gh` | GitHub Gist API |
+| `gh` CLI | `brew install gh` | GitHub API access |
 | GitHub auth | `gh auth login` | Authentication |
 
-#### 1. Create the shared gist (once per team)
-
-```bash
-gh gist create --public --filename registry.json - <<'EOF'
-{"version":1,"claims":[]}
-EOF
-```
-
-Copy the gist ID from the output URL.
-
-#### 2. Copy files into your project
+#### 1. Copy files into your project
 
 ```bash
 cp -r gsd-locksmith/.gsd /path/to/your-project/
 cp -r gsd-locksmith/.githooks /path/to/your-project/
 ```
 
-#### 3. Configure the gist ID
+#### 2. Create the registry branch (once per team)
+
+The installer does this automatically, but manually:
 
 ```bash
-mkdir -p .claude
-echo '{"gist_id":"YOUR_GIST_ID","project":"your-project-name"}' > .claude/gsd-team.json
+# The install script creates an orphan branch 'gsd-registry' with registry.json
+# via the GitHub API. Other devs just clone — the branch is already there.
 ```
 
-#### 4. Run the installer
+#### 3. Run the installer
 
 ```bash
 bash .gsd/install-hooks.sh
@@ -132,7 +124,7 @@ Teammates pull and run `bash .gsd/install-hooks.sh` — one command, done.
   gsd-status.sh                # View active claims
   install-hooks.sh             # Per-developer setup
   lib/common.sh                # Shared: dep checks, config, logging
-  lib/gist.sh                  # Shared: gist read/write
+  lib/registry.sh              # Shared: registry read/write via orphan branch
   lib/validate.sh              # 4 merge-time integrity checks
   tests/test-validate.sh       # 8 fixture tests
 
@@ -142,7 +134,7 @@ Teammates pull and run `bash .gsd/install-hooks.sh` — one command, done.
 
 .claude/
   settings.json                # CC hook wiring (Write/Edit → roadmap-gate)
-  gsd-team.json                # Shared gist ID config
+  gsd-team.json                # Registry config (branch name, project)
 ```
 
 ## Features
@@ -152,7 +144,7 @@ Teammates pull and run `bash .gsd/install-hooks.sh` — one command, done.
 When any GSD command writes or edits `ROADMAP.md`, the roadmap gate hook fires **before** the file is saved:
 
 - Extracts all milestone and phase numbers from the content
-- Checks the shared gist registry for conflicts
+- Checks the shared registry for conflicts
 - **Blocks** if a number is claimed by another developer (suggests the next free number)
 - **Claims** unclaimed numbers and allows the write
 - Injects context so Claude announces the claim to the user
@@ -191,7 +183,7 @@ After a successful merge, the `post-merge` hook marks the merged branch's claims
 # Manually claim a phase under milestone 2
 .gsd/claim-number.sh phase 2
 
-# Dry run — preview without writing to gist
+# Dry run — preview without writing to registry
 GSD_DRY_RUN=1 .gsd/claim-number.sh milestone
 
 # Verbose — see all API calls
@@ -211,7 +203,7 @@ The installer adds two sections to your project's `CLAUDE.md`:
 
 ## How the Registry Works
 
-The registry is a JSON file stored in a GitHub Gist:
+The registry is a `registry.json` file on the `gsd-registry` orphan branch — an isolated branch in the same repo with no common history, used purely for coordination. All team members can read and write it through the GitHub Contents API using their own `gh auth`.
 
 ```json
 {
@@ -247,7 +239,7 @@ The registry is a JSON file stored in a GitHub Gist:
 - **Pre-merge-commit** only fires on clean auto-merges, not conflict-resolution merges
 - **Best-effort concurrency** — two developers claiming at the exact same millisecond could collide (extremely rare for small teams, resolved manually)
 - **Requires `gh auth login`** on each developer's machine
-- **GitHub Gist** must be accessible (no offline mode)
+- **GitHub API** must be accessible (no offline mode)
 
 ## Troubleshooting
 
@@ -290,7 +282,7 @@ View and identify stale claims:
 .gsd/gsd-status.sh
 ```
 
-Manually release by editing the gist — change `"status": "active"` to `"status": "released"` for the stale entries.
+Manually release by editing the registry — checkout the `gsd-registry` branch and change `"status": "active"` to `"status": "released"` for the stale entries.
 
 ## Requirements
 

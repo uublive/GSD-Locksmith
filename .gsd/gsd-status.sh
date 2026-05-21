@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # .gsd/gsd-status.sh — Read-only status display for GSD team registry
-# Shows a formatted table of all active claims from the shared gist registry.
+# Shows a formatted table of all active claims from the shared registry.
 # Usage: ./.gsd/gsd-status.sh
 
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/gist.sh"
+source "$REPO_ROOT/.gsd/lib/registry.sh"
 
 check_deps
 load_config
@@ -16,7 +16,7 @@ REGISTRY="$(read_registry)"
 
 # Validate registry JSON
 echo "$REGISTRY" | jq -e . >/dev/null 2>&1 || {
-  echo "ERROR: Registry JSON is invalid or could not be read from gist." >&2
+  echo "ERROR: Registry JSON is invalid or could not be read." >&2
   exit 2
 }
 
