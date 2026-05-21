@@ -44,10 +44,16 @@ Carried forward to PROJECT.md Key Decisions table. See `.planning/PROJECT.md`.
 
 - (none)
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260521-l1o | Add PostToolUse hook for registry ownership context | 2026-05-21 | 7a375f2 | [260521-l1o-add-posttooluse-hook-to-inject-team-regi](./quick/260521-l1o-add-posttooluse-hook-to-inject-team-regi/) |
+
 ## Session Continuity
 
 **Last session:** 2026-05-21
-**Stopped at:** Milestone v1.0 archived
+**Stopped at:** Quick task 260521-l1o complete — ownership context hook
 **Next action:** `/gsd-new-milestone` — start v1.1 cycle
 
 ---
