@@ -111,25 +111,16 @@ FILES_TO_COPY=(README-HOOKS.md)
 
 for dir in "${DIRS_TO_COPY[@]}"; do
   if [[ -d "$SCRIPT_DIR/$dir" ]]; then
-    if [[ -d "$TARGET/$dir" ]]; then
-      cp -rn "$SCRIPT_DIR/$dir/." "$TARGET/$dir/" 2>/dev/null || \
-        rsync -a --ignore-existing "$SCRIPT_DIR/$dir/" "$TARGET/$dir/"
-      info "$dir/ — merged (existing files preserved)"
-    else
-      cp -r "$SCRIPT_DIR/$dir" "$TARGET/$dir"
-      info "$dir/ — created"
-    fi
+    mkdir -p "$TARGET/$dir"
+    cp -rf "$SCRIPT_DIR/$dir/." "$TARGET/$dir/"
+    info "$dir/ — updated"
   fi
 done
 
 for file in "${FILES_TO_COPY[@]}"; do
   if [[ -f "$SCRIPT_DIR/$file" ]]; then
-    if [[ -f "$TARGET/$file" ]]; then
-      warn "$file already exists — skipped (won't overwrite)"
-    else
-      cp "$SCRIPT_DIR/$file" "$TARGET/$file"
-      info "$file — created"
-    fi
+    cp -f "$SCRIPT_DIR/$file" "$TARGET/$file"
+    info "$file — updated"
   fi
 done
 
