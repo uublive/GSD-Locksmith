@@ -106,7 +106,7 @@ fi
 # ── Step 4: Copy hook files ─────────────────────────────────
 header "Installing GSD Locksmith..."
 
-DIRS_TO_COPY=(.gsd .githooks)
+DIRS_TO_COPY=(.gsd .githooks .claude/commands)
 FILES_TO_COPY=(README-HOOKS.md)
 
 for dir in "${DIRS_TO_COPY[@]}"; do
