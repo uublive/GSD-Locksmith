@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # GSD-LOCKSMITH-START
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-[[ -x "$REPO_ROOT/.gsd/hooks/post-merge.sh" ]] && "$REPO_ROOT/.gsd/hooks/post-merge.sh"
+[[ -x "$REPO_ROOT/.gsd/locksmith/hooks/post-merge.sh" ]] && "$REPO_ROOT/.gsd/locksmith/hooks/post-merge.sh"
 # GSD-LOCKSMITH-END

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# .gsd/tests/test-validate.sh — Fixture-based test harness for .gsd/lib/validate.sh
-# Usage: bash .gsd/tests/test-validate.sh [gap|dup|drift|stale]
+# .gsd/locksmith/tests/test-validate.sh — Fixture-based test harness for .gsd/locksmith/lib/validate.sh
+# Usage: bash .gsd/locksmith/tests/test-validate.sh [gap|dup|drift|stale]
 # Exit 0 = all selected tests pass; exit 1 = any failure
 #
 # No bats dependency — plain bash only.
@@ -10,15 +10,15 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-VALIDATE_SH="$REPO_ROOT/.gsd/lib/validate.sh"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+VALIDATE_SH="$REPO_ROOT/.gsd/locksmith/lib/validate.sh"
 
 if [[ ! -f "$VALIDATE_SH" ]]; then
-  echo "ERROR: .gsd/lib/validate.sh not found (expected at $VALIDATE_SH)" >&2
+  echo "ERROR: .gsd/locksmith/lib/validate.sh not found (expected at $VALIDATE_SH)" >&2
   exit 1
 fi
 
-# shellcheck source=../.gsd/lib/validate.sh
+# shellcheck source=../.gsd/locksmith/lib/validate.sh
 source "$VALIDATE_SH"
 
 # ---------------------------------------------------------------------------

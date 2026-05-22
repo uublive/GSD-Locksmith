@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# .gsd/roadmap-gate.sh — PreToolUse hook for Write/Edit on ROADMAP.md
+# .gsd/locksmith/roadmap-gate.sh — PreToolUse hook for Write/Edit on ROADMAP.md
 #
 # Fires before any Write or Edit to files matching ROADMAP.md.
 # Extracts milestone/phase numbers from the content, checks the shared
@@ -35,12 +35,12 @@ if [[ -z "$REPO_ROOT" ]]; then
   exit 0
 fi
 
-if [[ ! -f "$REPO_ROOT/.claude/gsd-team.json" ]]; then
+if [[ ! -f "$REPO_ROOT/.gsd/locksmith/config.json" ]]; then
   exit 0
 fi
 
-source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/registry.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/common.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/registry.sh"
 
 load_config 2>/dev/null || exit 0
 

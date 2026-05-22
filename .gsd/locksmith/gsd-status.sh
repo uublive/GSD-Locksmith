@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# .gsd/gsd-status.sh — Read-only status display for GSD team registry
+# .gsd/locksmith/gsd-status.sh — Read-only status display for GSD team registry
 # Shows a formatted table of all active claims from the shared registry.
-# Usage: ./.gsd/gsd-status.sh
+# Usage: ./.gsd/locksmith/gsd-status.sh
 
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/registry.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/common.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/registry.sh"
 
 check_deps
 load_config

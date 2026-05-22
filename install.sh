@@ -106,18 +106,21 @@ fi
 # ── Step 4: Copy hook files ─────────────────────────────────
 header "Installing GSD Locksmith..."
 
-# Locksmith-owned directories — safe to overwrite entirely
-OWNED_DIRS=(.gsd .claude/commands)
+# Locksmith-owned directory — safe to overwrite entirely
+if [[ -d "$SCRIPT_DIR/.gsd/locksmith" ]]; then
+  mkdir -p "$TARGET/.gsd/locksmith"
+  cp -rf "$SCRIPT_DIR/.gsd/locksmith/." "$TARGET/.gsd/locksmith/"
+  info ".gsd/locksmith/ — updated"
+fi
+
+# Slash command — copied to .claude/commands/ (managed, not owned)
+if [[ -f "$SCRIPT_DIR/.gsd/locksmith/commands/gsd-status.md" ]]; then
+  mkdir -p "$TARGET/.claude/commands"
+  cp -f "$SCRIPT_DIR/.gsd/locksmith/commands/gsd-status.md" "$TARGET/.claude/commands/gsd-status.md"
+  info ".claude/commands/gsd-status.md — updated"
+fi
 
 STANDALONE_FILES=(README-HOOKS.md)
-
-for dir in "${OWNED_DIRS[@]}"; do
-  if [[ -d "$SCRIPT_DIR/$dir" ]]; then
-    mkdir -p "$TARGET/$dir"
-    cp -rf "$SCRIPT_DIR/$dir/." "$TARGET/$dir/"
-    info "$dir/ — updated"
-  fi
-done
 
 for file in "${STANDALONE_FILES[@]}"; do
   if [[ -f "$SCRIPT_DIR/$file" ]]; then
@@ -135,7 +138,7 @@ for hook in "${HOOK_NAMES[@]}"; do
   HOOK_FILE="$TARGET/.githooks/$hook"
   LOCKSMITH_BLOCK="# GSD-LOCKSMITH-START
 REPO_ROOT=\"\$(git rev-parse --show-toplevel)\"
-[[ -x \"\$REPO_ROOT/.gsd/hooks/${hook}.sh\" ]] && \"\$REPO_ROOT/.gsd/hooks/${hook}.sh\"
+[[ -x \"\$REPO_ROOT/.gsd/locksmith/hooks/${hook}.sh\" ]] && \"\$REPO_ROOT/.gsd/locksmith/hooks/${hook}.sh\"
 # GSD-LOCKSMITH-END"
 
   if [[ -f "$HOOK_FILE" ]] && grep -q "GSD-LOCKSMITH-START" "$HOOK_FILE"; then
@@ -157,9 +160,10 @@ REPO_ROOT=\"\$(git rev-parse --show-toplevel)\"
   fi
 done
 
-chmod 750 "$TARGET/.gsd/"*.sh 2>/dev/null || true
-chmod 644 "$TARGET/.gsd/lib/"*.sh 2>/dev/null || true
-chmod 750 "$TARGET/.gsd/tests/"*.sh 2>/dev/null || true
+chmod 750 "$TARGET/.gsd/locksmith/"*.sh 2>/dev/null || true
+chmod 644 "$TARGET/.gsd/locksmith/lib/"*.sh 2>/dev/null || true
+chmod 750 "$TARGET/.gsd/locksmith/hooks/"*.sh 2>/dev/null || true
+chmod 750 "$TARGET/.gsd/locksmith/tests/"*.sh 2>/dev/null || true
 chmod 750 "$TARGET/.githooks/"* 2>/dev/null || true
 
 # ── Step 5: Registry branch setup ──────────────────────────
@@ -199,21 +203,25 @@ REFEOF
 fi
 
 PROJECT_NAME=$(basename "$TARGET")
+mkdir -p "$TARGET/.gsd/locksmith"
 jq -n --arg b "$REGISTRY_BRANCH" --arg p "$PROJECT_NAME" \
-  '{registry_branch:$b,project:$p}' > "$TARGET/.claude/gsd-team.json"
-info "Config written: .claude/gsd-team.json"
+  '{registry_branch:$b,project:$p}' > "$TARGET/.gsd/locksmith/config.json"
+info "Config written: .gsd/locksmith/config.json"
 
 # ── Step 5b: Add locksmith rule to CLAUDE.md ────────────
 header "Adding locksmith rule to CLAUDE.md..."
 
 CLAUDE_MD="$TARGET/CLAUDE.md"
-TEAM_MARKER="## GSD Locksmith"
 
-if [[ -f "$CLAUDE_MD" ]] && grep -q "$TEAM_MARKER" "$CLAUDE_MD"; then
-  info "CLAUDE.md already has locksmith rule — skipped"
-else
-  cat >> "$CLAUDE_MD" <<'CLAUDEEOF'
+if [[ -f "$CLAUDE_MD" ]] && grep -q "GSD-LOCKSMITH-START" "$CLAUDE_MD"; then
+  # Update existing block in place
+  sed -i.bak '/<!-- GSD-LOCKSMITH-START -->/,/<!-- GSD-LOCKSMITH-END -->/d' "$CLAUDE_MD"
+  rm -f "$CLAUDE_MD.bak"
+fi
 
+cat >> "$CLAUDE_MD" <<'CLAUDEEOF'
+
+<!-- GSD-LOCKSMITH-START -->
 ## GSD Locksmith
 
 This project uses a shared registry (on the `gsd-registry` orphan branch) to coordinate milestone and phase numbers across the team. CC hooks automatically claim numbers before GSD commands execute.
@@ -224,25 +232,25 @@ This project uses a shared registry (on the `gsd-registry` orphan branch) to coo
 3. If a claim fails (hook exits with error), stop and show the error to the user
 
 **Registry commands available to the user:**
-- `./.gsd/gsd-status.sh` — view all active claims
-- `./.gsd/claim-number.sh milestone` — manually claim a milestone number
-- `./.gsd/claim-number.sh phase <milestone_num>` — manually claim a phase number
+- `./.gsd/locksmith/gsd-status.sh` — view all active claims
+- `./.gsd/locksmith/claim-number.sh milestone` — manually claim a milestone number
+- `./.gsd/locksmith/claim-number.sh phase <milestone_num>` — manually claim a phase number
 - `GSD_DRY_RUN=1` prefix — preview without writing
 
 ## Infrastructure Files (do not modify)
 
-The `.gsd/`, `.githooks/`, and `.claude/` directories contain GSD Locksmith infrastructure.
+The `.gsd/locksmith/`, `.githooks/`, and `.claude/` directories contain GSD Locksmith infrastructure.
 These are NOT part of this project's source code. Do not modify, review, plan, or include them in
 any code analysis, phase scope, or implementation task.
+<!-- GSD-LOCKSMITH-END -->
 CLAUDEEOF
-  info "CLAUDE.md updated with locksmith rule"
-fi
+info "CLAUDE.md updated with locksmith rule"
 
 # ── Step 6: Run install-hooks.sh ─────────────────────────────
 header "Wiring hooks..."
 
-if [[ -f "$TARGET/.gsd/install-hooks.sh" ]]; then
-  bash "$TARGET/.gsd/install-hooks.sh"
+if [[ -f "$TARGET/.gsd/locksmith/install-hooks.sh" ]]; then
+  bash "$TARGET/.gsd/locksmith/install-hooks.sh"
 else
   warn "install-hooks.sh not found — configuring manually"
   git config core.hooksPath .githooks 2>/dev/null || true
@@ -267,7 +275,7 @@ else
   warn "CC hooks: settings.json not configured (run install-hooks.sh manually)"
 fi
 
-REG_CHECK=$(jq -r '.registry_branch' "$TARGET/.claude/gsd-team.json" 2>/dev/null)
+REG_CHECK=$(jq -r '.registry_branch' "$TARGET/.gsd/locksmith/config.json" 2>/dev/null)
 if [[ -n "$REG_CHECK" && "$REG_CHECK" != "null" ]]; then
   info "Registry branch: $REG_CHECK on $REPO_NWO"
 else
@@ -275,11 +283,11 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-if [[ -f "$TARGET/tests/test-validate.sh" ]]; then
-  if bash "$TARGET/tests/test-validate.sh" &>/dev/null; then
+if [[ -f "$TARGET/.gsd/locksmith/tests/test-validate.sh" ]]; then
+  if bash "$TARGET/.gsd/locksmith/tests/test-validate.sh" &>/dev/null; then
     info "Validation tests: all passing"
   else
-    warn "Validation tests: some failures (run: bash tests/test-validate.sh)"
+    warn "Validation tests: some failures (run: bash .gsd/locksmith/tests/test-validate.sh)"
   fi
 fi
 
@@ -297,7 +305,7 @@ echo "  Registry:  $REGISTRY_BRANCH branch on $REPO_NWO"
 echo ""
 echo "  Quick test:"
 echo "    cd $TARGET"
-echo "    GSD_DRY_RUN=1 bash .gsd/claim-number.sh milestone"
+echo "    GSD_DRY_RUN=1 bash .gsd/locksmith/claim-number.sh milestone"
 echo ""
 echo "  Teammates just clone and run:"
 echo "    bash install.sh $TARGET"

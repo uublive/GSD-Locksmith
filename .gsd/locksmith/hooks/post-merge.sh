@@ -17,10 +17,10 @@
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-# shellcheck source=.gsd/lib/common.sh
-source "$REPO_ROOT/.gsd/lib/common.sh"
-# shellcheck source=.gsd/lib/registry.sh
-source "$REPO_ROOT/.gsd/lib/registry.sh"
+# shellcheck source=.gsd/locksmith/lib/common.sh
+source "$REPO_ROOT/.gsd/locksmith/lib/common.sh"
+# shellcheck source=.gsd/locksmith/lib/registry.sh
+source "$REPO_ROOT/.gsd/locksmith/lib/registry.sh"
 
 # --- Prerequisite checks (non-blocking: wrap with || exit 0) ---
 check_deps || {
@@ -28,7 +28,7 @@ check_deps || {
   exit 0
 }
 load_config || {
-  echo "WARNING: post-merge gsd-registry cleanup skipped — .claude/gsd-team.json not configured" >&2
+  echo "WARNING: post-merge gsd-registry cleanup skipped — .gsd/locksmith/config.json not configured" >&2
   exit 0
 }
 

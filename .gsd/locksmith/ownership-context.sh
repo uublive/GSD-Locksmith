@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# .gsd/ownership-context.sh — PostToolUse hook for Bash
+# .gsd/locksmith/ownership-context.sh — PostToolUse hook for Bash
 #
 # After any Bash call containing `gsd-sdk query roadmap` or `gsd-sdk query init`,
 # reads the team registry and injects ownership context as additionalContext.
@@ -18,10 +18,10 @@ esac
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -z "$REPO_ROOT" ]] && exit 0
-[[ -f "$REPO_ROOT/.claude/gsd-team.json" ]] || exit 0
+[[ -f "$REPO_ROOT/.gsd/locksmith/config.json" ]] || exit 0
 
-source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/registry.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/common.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/registry.sh"
 
 load_config 2>/dev/null || exit 0
 

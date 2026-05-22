@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.gsd/roadmap-gate.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.gsd/locksmith/roadmap-gate.sh"
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.gsd/roadmap-gate.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.gsd/locksmith/roadmap-gate.sh"
           }
         ]
       }
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR}/.gsd/ownership-context.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.gsd/locksmith/ownership-context.sh"
           }
         ]
       }

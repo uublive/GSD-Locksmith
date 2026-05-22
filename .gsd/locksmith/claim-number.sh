@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# .gsd/claim-number.sh — Allocation entry point for milestone and phase number claims
+# .gsd/locksmith/claim-number.sh — Allocation entry point for milestone and phase number claims
 # Usage:
-#   ./.gsd/claim-number.sh milestone
-#   ./.gsd/claim-number.sh phase <milestone_num>
+#   ./.gsd/locksmith/claim-number.sh milestone
+#   ./.gsd/locksmith/claim-number.sh phase <milestone_num>
 #
 # Environment:
 #   GSD_DRY_RUN=1    Preview the claim without writing to the registry
@@ -11,8 +11,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/.gsd/lib/common.sh"
-source "$REPO_ROOT/.gsd/lib/registry.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/common.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/registry.sh"
 
 check_deps
 load_config

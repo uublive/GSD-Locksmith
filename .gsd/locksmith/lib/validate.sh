@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# .gsd/lib/validate.sh — Validation functions for GSD planning file integrity
+# .gsd/locksmith/lib/validate.sh — Validation functions for GSD planning file integrity
 #
 # Phase:    03-git-merge-validation
 # Purpose:  Four validation functions sourced by .githooks/pre-merge-commit

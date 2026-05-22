@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
-# .gsd/lib/registry.sh — Registry read/write via orphan branch in same repo
+# .gsd/locksmith/lib/registry.sh — Registry read/write via orphan branch in same repo
 # Provides: read_registry(), write_registry()
 # Requires: REGISTRY_REPO and REGISTRY_BRANCH to be set (via load_config() from common.sh)
 
 : "${REPO_ROOT:=$(git rev-parse --show-toplevel)}"
-source "$REPO_ROOT/.gsd/lib/common.sh"
+source "$REPO_ROOT/.gsd/locksmith/lib/common.sh"
 
 REGISTRY_FILE="registry.json"
 
 read_registry() {
   verbose_log "Reading registry from $REGISTRY_REPO branch $REGISTRY_BRANCH"
-  gh api "/repos/$REGISTRY_REPO/contents/$REGISTRY_FILE" \
-    -H "Accept: application/vnd.github.raw+json" \
-    -f ref="$REGISTRY_BRANCH"
+  gh api "/repos/$REGISTRY_REPO/contents/$REGISTRY_FILE?ref=$REGISTRY_BRANCH" \
+    -H "Accept: application/vnd.github.raw+json"
 }
 
 write_registry() {

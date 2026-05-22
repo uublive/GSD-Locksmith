@@ -40,7 +40,7 @@ A set of shell-based plugins for GSD (Get Shit Done) that enable a 3-person dev 
 ### GitHub Contents API Access Pattern (Orphan Branch)
 | Operation | Command | Notes |
 |-----------|---------|-------|
-| Read registry | `gh api /repos/{owner}/{repo}/contents/registry.json -H "Accept: application/vnd.github.raw+json" -f ref=gsd-registry` | Returns raw file content; pipe to `jq` |
+| Read registry | `gh api "/repos/{owner}/{repo}/contents/registry.json?ref=gsd-registry" -H "Accept: application/vnd.github.raw+json"` | Returns raw file content; pipe to `jq` |
 | Write registry | `gh api --method PUT /repos/{owner}/{repo}/contents/registry.json --input <json>` | PUT with base64 content + file SHA; targets `gsd-registry` branch |
 | Bootstrap check | `gh auth status` | Verify `gh auth login` was run; emit helpful error if not |
 | Rate limits | 5,000 req/hour authenticated | Well within range for a 3-person team; no throttling concern |

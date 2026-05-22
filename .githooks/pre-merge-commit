@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # GSD-LOCKSMITH-START
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-[[ -x "$REPO_ROOT/.gsd/hooks/pre-merge-commit.sh" ]] && "$REPO_ROOT/.gsd/hooks/pre-merge-commit.sh"
+[[ -x "$REPO_ROOT/.gsd/locksmith/hooks/pre-merge-commit.sh" ]] && "$REPO_ROOT/.gsd/locksmith/hooks/pre-merge-commit.sh"
 # GSD-LOCKSMITH-END

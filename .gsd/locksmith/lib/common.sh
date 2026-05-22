@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# .gsd/lib/common.sh — Shared helper functions for GSD team coordination hooks
+# .gsd/locksmith/lib/common.sh — Shared helper functions for GSD team coordination hooks
 # Provides: check_deps(), load_config(), verbose_log()
 
 check_deps() {
@@ -20,9 +20,9 @@ check_deps() {
 load_config() {
   local repo_root
   repo_root="$(git rev-parse --show-toplevel)"
-  local config_file="$repo_root/.claude/gsd-team.json"
+  local config_file="$repo_root/.gsd/locksmith/config.json"
   [[ -f "$config_file" ]] || {
-    echo "ERROR: .claude/gsd-team.json not found. Run install.sh to set up." >&2
+    echo "ERROR: .gsd/locksmith/config.json not found. Run install.sh to set up." >&2
     exit 1
   }
   REGISTRY_BRANCH="$(jq -r '.registry_branch // "gsd-registry"' "$config_file")"

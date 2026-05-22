@@ -68,7 +68,7 @@ bash gsd-locksmith/install.sh /path/to/your-project
 
 The installer will:
 1. Check prerequisites (`jq`, `gh`, `gh auth`)
-2. Copy `.gsd/`, `.githooks/` into your project
+2. Copy `.gsd/locksmith/` into your project
 3. Create the `gsd-registry` orphan branch (or detect it already exists)
 4. Configure git hooks and Claude Code hooks
 5. Add team registry rules to your `CLAUDE.md`
@@ -87,8 +87,7 @@ The installer will:
 #### 1. Copy files into your project
 
 ```bash
-cp -r gsd-locksmith/.gsd /path/to/your-project/
-cp -r gsd-locksmith/.githooks /path/to/your-project/
+cp -r gsd-locksmith/.gsd/locksmith /path/to/your-project/.gsd/locksmith
 ```
 
 #### 2. Create the registry branch (once per team)
@@ -103,40 +102,45 @@ The installer does this automatically, but manually:
 #### 3. Run the installer
 
 ```bash
-bash .gsd/install-hooks.sh
+bash .gsd/locksmith/install-hooks.sh
 ```
 
 #### 5. Commit and push
 
 ```bash
-git add .gsd/ .githooks/ .claude/ README-HOOKS.md
+git add .gsd/locksmith/ .githooks/ .claude/ README-HOOKS.md
 git commit -m "chore: add GSD team sync hooks"
 git push
 ```
 
-Teammates pull and run `bash .gsd/install-hooks.sh` — one command, done.
+Teammates pull and run `bash .gsd/locksmith/install-hooks.sh` — one command, done.
 
 ## What Gets Installed
 
 ```
-.gsd/                          # Hidden from Claude's project analysis
+.gsd/locksmith/                # All locksmith-owned files — one dir to uninstall
   roadmap-gate.sh              # PreToolUse hook — claims/blocks on ROADMAP.md writes
   ownership-context.sh         # PostToolUse hook — injects team ownership after GSD queries
   claim-number.sh              # Manual number claiming CLI
   gsd-status.sh                # View active claims
   install-hooks.sh             # Per-developer setup
+  uninstall.sh                 # Clean removal of all locksmith artifacts
+  config.json                  # Registry config (branch name, project)
   lib/common.sh                # Shared: dep checks, config, logging
   lib/registry.sh              # Shared: registry read/write via orphan branch
   lib/validate.sh              # 4 merge-time integrity checks
+  hooks/pre-merge-commit.sh    # Pre-merge validation logic
+  hooks/post-merge.sh          # Post-merge claim release logic
   tests/test-validate.sh       # 8 fixture tests
+  commands/gsd-status.md       # Slash command source
 
 .githooks/                     # Activated via core.hooksPath
-  pre-merge-commit             # Blocks merges with integrity issues
-  post-merge                   # Releases claims after merge
+  pre-merge-commit             # Thin wrapper — calls .gsd/locksmith/hooks/
+  post-merge                   # Thin wrapper — calls .gsd/locksmith/hooks/
 
 .claude/
   settings.json                # CC hook wiring (PreToolUse + PostToolUse)
-  gsd-team.json                # Registry config (branch name, project)
+  commands/gsd-status.md       # Copied from locksmith on install
 ```
 
 ## Features
@@ -189,22 +193,25 @@ After a successful merge, the `post-merge` hook marks the merged branch's claims
 
 ```bash
 # View all active claims
-.gsd/gsd-status.sh
+.gsd/locksmith/gsd-status.sh
 
 # Manually claim a milestone (+ auto-claims phase 1)
-.gsd/claim-number.sh milestone
+.gsd/locksmith/claim-number.sh milestone
 
 # Manually claim a phase under milestone 2
-.gsd/claim-number.sh phase 2
+.gsd/locksmith/claim-number.sh phase 2
 
 # Dry run — preview without writing to registry
-GSD_DRY_RUN=1 .gsd/claim-number.sh milestone
+GSD_DRY_RUN=1 .gsd/locksmith/claim-number.sh milestone
 
 # Verbose — see all API calls
-GSD_VERBOSE=1 .gsd/claim-number.sh milestone
+GSD_VERBOSE=1 .gsd/locksmith/claim-number.sh milestone
 
 # Run validation tests
-bash .gsd/tests/test-validate.sh
+bash .gsd/locksmith/tests/test-validate.sh
+
+# Uninstall locksmith from the project
+bash .gsd/locksmith/uninstall.sh
 ```
 
 ## CLAUDE.md Integration
@@ -213,7 +220,7 @@ The installer adds two sections to your project's `CLAUDE.md`:
 
 **Team Registry** — tells Claude to announce claims visibly when the hook fires, and lists available registry commands.
 
-**Infrastructure Files** — tells Claude that `.gsd/`, `.githooks/`, and `.claude/` are not project source code and should not be modified, reviewed, or included in plans.
+**Infrastructure Files** — tells Claude that `.gsd/locksmith/`, `.githooks/`, and `.claude/` are not project source code and should not be modified, reviewed, or included in plans.
 
 ## How the Registry Works
 
@@ -269,7 +276,7 @@ cat .claude/settings.json | jq .   # Should show PreToolUse entries
 Re-run the installer:
 
 ```bash
-bash .gsd/install-hooks.sh
+bash .gsd/locksmith/install-hooks.sh
 ```
 
 ### "gh auth not configured"
@@ -293,7 +300,7 @@ git merge --no-verify feature/branch
 View and identify stale claims:
 
 ```bash
-.gsd/gsd-status.sh
+.gsd/locksmith/gsd-status.sh
 ```
 
 Manually release by editing the registry — checkout the `gsd-registry` branch and change `"status": "active"` to `"status": "released"` for the stale entries.
