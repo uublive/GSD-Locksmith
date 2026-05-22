@@ -106,10 +106,15 @@ fi
 # ── Step 4: Copy hook files ─────────────────────────────────
 header "Installing GSD Locksmith..."
 
-DIRS_TO_COPY=(.gsd .githooks .claude/commands)
-FILES_TO_COPY=(README-HOOKS.md)
+# Locksmith-owned directories — safe to overwrite entirely
+OWNED_DIRS=(.gsd .claude/commands)
 
-for dir in "${DIRS_TO_COPY[@]}"; do
+# Locksmith-owned files in shared directories — copy individually
+SHARED_DIR_FILES=(.githooks/pre-merge-commit .githooks/post-merge)
+
+STANDALONE_FILES=(README-HOOKS.md)
+
+for dir in "${OWNED_DIRS[@]}"; do
   if [[ -d "$SCRIPT_DIR/$dir" ]]; then
     mkdir -p "$TARGET/$dir"
     cp -rf "$SCRIPT_DIR/$dir/." "$TARGET/$dir/"
@@ -117,7 +122,15 @@ for dir in "${DIRS_TO_COPY[@]}"; do
   fi
 done
 
-for file in "${FILES_TO_COPY[@]}"; do
+for file in "${SHARED_DIR_FILES[@]}"; do
+  if [[ -f "$SCRIPT_DIR/$file" ]]; then
+    mkdir -p "$TARGET/$(dirname "$file")"
+    cp -f "$SCRIPT_DIR/$file" "$TARGET/$file"
+    info "$file — updated"
+  fi
+done
+
+for file in "${STANDALONE_FILES[@]}"; do
   if [[ -f "$SCRIPT_DIR/$file" ]]; then
     cp -f "$SCRIPT_DIR/$file" "$TARGET/$file"
     info "$file — updated"
