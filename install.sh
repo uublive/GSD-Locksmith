@@ -109,9 +109,6 @@ header "Installing GSD Locksmith..."
 # Locksmith-owned directories — safe to overwrite entirely
 OWNED_DIRS=(.gsd .claude/commands)
 
-# Locksmith-owned files in shared directories — copy individually
-SHARED_DIR_FILES=(.githooks/pre-merge-commit .githooks/post-merge)
-
 STANDALONE_FILES=(README-HOOKS.md)
 
 for dir in "${OWNED_DIRS[@]}"; do
@@ -122,18 +119,41 @@ for dir in "${OWNED_DIRS[@]}"; do
   fi
 done
 
-for file in "${SHARED_DIR_FILES[@]}"; do
+for file in "${STANDALONE_FILES[@]}"; do
   if [[ -f "$SCRIPT_DIR/$file" ]]; then
-    mkdir -p "$TARGET/$(dirname "$file")"
     cp -f "$SCRIPT_DIR/$file" "$TARGET/$file"
     info "$file — updated"
   fi
 done
 
-for file in "${STANDALONE_FILES[@]}"; do
-  if [[ -f "$SCRIPT_DIR/$file" ]]; then
-    cp -f "$SCRIPT_DIR/$file" "$TARGET/$file"
-    info "$file — updated"
+# Git hooks — inject Locksmith block into existing hooks without clobbering
+# Uses marker comments so re-install updates the block in place
+HOOK_NAMES=(pre-merge-commit post-merge)
+mkdir -p "$TARGET/.githooks"
+
+for hook in "${HOOK_NAMES[@]}"; do
+  HOOK_FILE="$TARGET/.githooks/$hook"
+  LOCKSMITH_BLOCK="# GSD-LOCKSMITH-START
+REPO_ROOT=\"\$(git rev-parse --show-toplevel)\"
+[[ -x \"\$REPO_ROOT/.gsd/hooks/${hook}.sh\" ]] && \"\$REPO_ROOT/.gsd/hooks/${hook}.sh\"
+# GSD-LOCKSMITH-END"
+
+  if [[ -f "$HOOK_FILE" ]] && grep -q "GSD-LOCKSMITH-START" "$HOOK_FILE"; then
+    # Update existing block in place
+    sed -i.bak '/# GSD-LOCKSMITH-START/,/# GSD-LOCKSMITH-END/d' "$HOOK_FILE"
+    rm -f "$HOOK_FILE.bak"
+    echo "$LOCKSMITH_BLOCK" >> "$HOOK_FILE"
+    info ".githooks/$hook — locksmith block updated"
+  elif [[ -f "$HOOK_FILE" ]]; then
+    # Append to existing hook
+    echo "" >> "$HOOK_FILE"
+    echo "$LOCKSMITH_BLOCK" >> "$HOOK_FILE"
+    info ".githooks/$hook — locksmith block appended (existing hook preserved)"
+  else
+    # Create new hook
+    printf '#!/usr/bin/env bash\n%s\n' "$LOCKSMITH_BLOCK" > "$HOOK_FILE"
+    chmod 750 "$HOOK_FILE"
+    info ".githooks/$hook — created"
   fi
 done
 
